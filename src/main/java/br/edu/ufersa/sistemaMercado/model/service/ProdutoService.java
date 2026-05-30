@@ -46,18 +46,15 @@ public class ProdutoService {
         }
     }
 
-    public boolean removerProduto(String codigoDeBarras) throws DadosIncorretosException {
-        if (codigoDeBarras == null || codigoDeBarras.isEmpty()) {
-            throw new DadosIncorretosException("Código de barras inválido");
-        } else {
-            boolean removido = bancoProdutos.removeIf(p -> p.getCodigoBarras().equals(codigoDeBarras)); //muda isso mds
-            if (!removido) {
-                throw new DadosIncorretosException("Produto não encontrado.");
-            } else {
-                System.out.println("Produto removido com sucesso!");
+    public boolean removerProduto(String nome) throws DadosIncorretosException {
+        for (int i = 0; i < bancoProdutos.size(); i++) {
+            if (bancoProdutos.get(i).getNome().equals(nome)) {
+                bancoProdutos.remove(i);
+                System.out.println("Produto removido com sucesso");
                 return true;
             }
         }
+        throw new DadosIncorretosException("Produto não encontrado.");
     }
 
     public void alterarDados(Produto produto, String novoNome, double novoPreco) throws DadosIncorretosException {
