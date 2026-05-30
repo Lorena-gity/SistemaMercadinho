@@ -1,0 +1,52 @@
+package br.edu.ufersa.sistemaMercado.model.entities;
+
+import br.edu.ufersa.sistemaMercado.exceptions.DadosIncorretosException;
+
+public abstract class Usuario {
+    private int idUsuario;
+    private String nome;
+    private String senha;
+
+    // Construtores
+    public Usuario() {}
+    
+    public Usuario(int idUsuario, String nome, String senha) {
+		super();
+		this.idUsuario = idUsuario;
+		this.nome = nome;
+		this.senha = senha;
+	}
+
+	public int getIdUsuario() {
+        return idUsuario;
+    }
+    
+    public String getNome() {
+    	return nome;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+
+    public void setNome(String novoNome) throws DadosIncorretosException { // para alterar o nome atual do usuário é necessário que o novo nome seja preenchido e que não seja igual ao anterior
+        if (novoNome == null || novoNome.isEmpty()) {
+            throw new DadosIncorretosException("Nome não pode ser vazio.");
+        } else if (this.nome != null && novoNome.equals(this.nome)) { // .equals é usado para comparar o texto ( "==" iria comparar endereço de memória)
+            throw new DadosIncorretosException("Novo nome deve ser diferente do nome atual.");
+        } else {
+            this.nome = novoNome;
+        }
+    }
+
+    public void setSenha(String novaSenha) throws DadosIncorretosException {
+        if (novaSenha == null || novaSenha.isEmpty()) {
+            throw new DadosIncorretosException("Senha não pode ser vazia.");
+        } else if (this.senha != null && novaSenha.equals(this.senha)) {
+            throw new DadosIncorretosException("Nova senha deve ser diferente da senha atual.");
+        } else {
+            this.senha = novaSenha;
+        }
+    }
+}
