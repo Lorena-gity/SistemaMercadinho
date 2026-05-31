@@ -1,4 +1,4 @@
-package br.edu.ufersa.sistemaMercado.model.dao;
+package br.edu.ufersa.sistemaMercado.model.DAO;
 
 import java.util.List;
 

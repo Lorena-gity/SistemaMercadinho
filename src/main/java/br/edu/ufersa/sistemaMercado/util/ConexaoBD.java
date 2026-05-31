@@ -19,4 +19,14 @@ public class ConexaoBD {
             throw new RuntimeException("Erro ao conectar ao banco de dados.", e);
         }
     }
+
+    public static void closeConnection(Connection con) {
+        if (con != null) {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                throw new RuntimeException("Erro ao desconectar ao banco de dados.", e);
+            }
+        }
+    }
 }

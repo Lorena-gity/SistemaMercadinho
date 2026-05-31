@@ -1,7 +1,7 @@
 package br.edu.ufersa.sistemaMercado.teste;
 
 import br.edu.ufersa.sistemaMercado.exceptions.DadosIncorretosException;
-import br.edu.ufersa.sistemaMercado.model.dao.TipoProdutoDAO;
+import br.edu.ufersa.sistemaMercado.model.DAO.TipoProdutoDAO;
 import br.edu.ufersa.sistemaMercado.model.entities.FormaDeVenda;
 import br.edu.ufersa.sistemaMercado.model.entities.NotaCompra;
 import br.edu.ufersa.sistemaMercado.model.entities.Produto;

@@ -1,4 +1,4 @@
-package br.edu.ufersa.sistemaMercado.model.dao;
+package br.edu.ufersa.sistemaMercado.model.DAO;
 
 import br.edu.ufersa.sistemaMercado.model.entities.FormaDeVenda;
 import br.edu.ufersa.sistemaMercado.model.entities.Produto;

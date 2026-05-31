@@ -1,6 +1,6 @@
 package br.edu.ufersa.sistemaMercado.view;
 
-import br.edu.ufersa.sistemaMercado.model.dao.ProdutoDAO;
+import br.edu.ufersa.sistemaMercado.model.DAO.ProdutoDAO;
 import br.edu.ufersa.sistemaMercado.model.entities.Produto;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -41,11 +41,12 @@ public class Main extends Application {
         try {
             List<Produto> produtos = produtoDAO.listarTodos();
             itens.clear();
-            for (Produto p : produtos) {
-                itens.add(p.getNome() + " - R$ " + p.getPreco() + " (estoque: " + p.getQuantidadeEstoque() + ")");
-            }
-            if (produtos.isEmpty()) {
-                itens.add("Nenhum produto cadastrado.");
+            if (produtos == null || produtos.isEmpty()) {
+                itens.add("Nenhum produto cadastrado");
+            } else {
+                for (Produto p : produtos) {
+                    itens.add(p.getNome() + " - R$ " + p.getPreco() + " (estoque: " + p.getQuantidadeEstoque() + ")");
+                }
             }
         } catch (RuntimeException erro) {
             new Alert(Alert.AlertType.ERROR, "Erro ao acessar o banco: " + erro.getMessage()).showAndWait();
