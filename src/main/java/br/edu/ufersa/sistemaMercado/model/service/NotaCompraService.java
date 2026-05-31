@@ -1,12 +1,17 @@
 package br.edu.ufersa.sistemaMercado.model.service;
 
 import br.edu.ufersa.sistemaMercado.exceptions.DadosIncorretosException;
+import br.edu.ufersa.sistemaMercado.model.dao.NotaCompraDAO;
+import br.edu.ufersa.sistemaMercado.model.dao.ProdutoDAO;
 import br.edu.ufersa.sistemaMercado.model.entities.ItemNota;
 import br.edu.ufersa.sistemaMercado.model.entities.NotaCompra;
 import br.edu.ufersa.sistemaMercado.model.entities.Produto;
 import java.util.Iterator;
 
 public class NotaCompraService {
+
+    private final ProdutoDAO produtoDAO = new ProdutoDAO();
+    private final NotaCompraDAO notaDAO = new NotaCompraDAO();
 
     public void adicionarItem(NotaCompra nota, Produto produto, int quantidade) throws DadosIncorretosException {
         if (nota == null) throw new DadosIncorretosException("Nota inválida.");
@@ -18,21 +23,6 @@ public class NotaCompraService {
         item.setQuantidade(quantidade);
         item.setPrecoUnitario(produto.getPreco());
         nota.getListaItens().add(item);
-    }
-
-    public void listarItens(NotaCompra nota) throws DadosIncorretosException {
-        if (nota == null) throw new DadosIncorretosException("Nota inválida.");
-        if (nota.getListaItens().isEmpty()) {
-            System.out.println("Nenhum item na nota.");
-            return;
-        }
-        for (ItemNota item : nota.getListaItens()) {
-            System.out.println("Produto: " + item.getProduto().getNome());
-            System.out.println("Quantidade: " + item.getQuantidade());
-            System.out.println("Preço unitário: " + item.getPrecoUnitario());
-            System.out.println("Subtotal: " + item.calcularSubTotal());
-            System.out.println("--------------------------------");
-        }
     }
 
     public boolean cancelarItem(NotaCompra nota, String codigoBarras) throws DadosIncorretosException {
@@ -68,13 +58,31 @@ public class NotaCompraService {
         return total;
     }
 
-    public void mostrarNota(NotaCompra nota) throws DadosIncorretosException {
+    // Fecha a venda: confere o estoque de cada item, dá baixa e grava a nota no banco
+    public void finalizarVenda(NotaCompra nota) throws DadosIncorretosException {
         if (nota == null) throw new DadosIncorretosException("Nota inválida.");
+        if (nota.getListaItens().isEmpty()) throw new DadosIncorretosException("Nota sem itens.");
 
-        System.out.println("Número da Nota: " + nota.getNumeroNota());
-        System.out.println("Data: " + nota.getDataHora());
-        System.out.println("Itens:");
-        listarItens(nota);
-        System.out.println("Total: " + calcularTotal(nota));
+        // valida o estoque antes de mexer em qualquer coisa
+        for (ItemNota item : nota.getListaItens()) {
+            Produto atual = produtoDAO.buscarPorId(item.getProduto().getIdProduto());
+            if (atual == null) {
+                throw new DadosIncorretosException("Produto não encontrado: " + item.getProduto().getNome());
+            }
+            if (item.getQuantidade() > atual.getQuantidadeEstoque()) {
+                throw new DadosIncorretosException("Estoque insuficiente para " + atual.getNome());
+            }
+        }
+
+        calcularTotal(nota);
+
+        // dá baixa no estoque de cada produto vendido
+        for (ItemNota item : nota.getListaItens()) {
+            Produto atual = produtoDAO.buscarPorId(item.getProduto().getIdProduto());
+            atual.setQuantidadeEstoque(atual.getQuantidadeEstoque() - item.getQuantidade());
+            produtoDAO.atualizar(atual);
+        }
+
+        notaDAO.inserir(nota);
     }
 }

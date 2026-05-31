@@ -1,61 +1,45 @@
 package br.edu.ufersa.sistemaMercado.model.service;
+
 import br.edu.ufersa.sistemaMercado.exceptions.DadosIncorretosException;
+import br.edu.ufersa.sistemaMercado.model.dao.TipoProdutoDAO;
 import br.edu.ufersa.sistemaMercado.model.entities.TipoProduto;
+
 import java.util.List;
-import java.util.ArrayList;
 
 public class TipoProdutoService {
-    private List<TipoProduto> bancoTipos;
-
-    public TipoProdutoService() {
-        bancoTipos = new ArrayList<>();
-    }
-
-    public List<TipoProduto> getBancoTipos() {
-        return bancoTipos;
-    }
+    private final TipoProdutoDAO tipoDAO = new TipoProdutoDAO();
 
     public void criarTipoProduto(TipoProduto tipo) throws DadosIncorretosException {
         if (tipo == null) {
             throw new DadosIncorretosException("Tipo inválido");
-        } else {
-            for (TipoProduto t : bancoTipos) {
-                if (t.getIdTipo() == tipo.getIdTipo()) {
-                    throw new DadosIncorretosException("Tipo já cadastrado");
-                }
-            }
-            bancoTipos.add(tipo);
-            System.out.println("Tipo cadastrado com sucesso");
         }
+        if (tipoDAO.buscarPorNome(tipo.getNome()) != null) {
+            throw new DadosIncorretosException("Tipo já cadastrado");
+        }
+        tipoDAO.inserir(tipo);
     }
 
-    public void listarTipoProduto() throws DadosIncorretosException {
-        if (bancoTipos.isEmpty()) {
-            System.out.println("Nenhum tipo cadastrado");
-            return;
-        } else {
-            for (TipoProduto t : bancoTipos) {
-                System.out.println("Nome: " + t.getNome());
-            }
-        }
+    public List<TipoProduto> listarTipos() {
+        return tipoDAO.listarTodos();
     }
 
-    public boolean removerTipo(String nome) throws DadosIncorretosException {
-        for (int i = 0; i < bancoTipos.size(); i++) {
-            if (bancoTipos.get(i).getNome().equals(nome)) {
-                bancoTipos.remove(i);
-                System.out.println("Tipo removido com sucesso");
-                return true;
+    public void removerTipo(String nome) throws DadosIncorretosException {
+        for (TipoProduto t : tipoDAO.listarTodos()) {
+            if (t.getNome().equals(nome)) {
+                tipoDAO.deletar(t.getIdTipo());
+                return;
             }
         }
         throw new DadosIncorretosException("Tipo não encontrado.");
     }
 
     public void atualizarTipo(TipoProduto tipo, String novoNome) throws DadosIncorretosException {
-        if (tipo == null || !bancoTipos.contains(tipo)) {
+        if (tipo == null) {
             throw new DadosIncorretosException("Tipo não encontrado");
-        } if (novoNome != null && !novoNome.isEmpty()) {
+        }
+        if (novoNome != null && !novoNome.isEmpty()) {
             tipo.setNome(novoNome);
         }
+        tipoDAO.atualizar(tipo);
     }
 }

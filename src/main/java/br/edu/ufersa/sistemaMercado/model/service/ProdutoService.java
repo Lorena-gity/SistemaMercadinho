@@ -1,88 +1,61 @@
 package br.edu.ufersa.sistemaMercado.model.service;
+
 import br.edu.ufersa.sistemaMercado.exceptions.DadosIncorretosException;
+import br.edu.ufersa.sistemaMercado.model.dao.ProdutoDAO;
 import br.edu.ufersa.sistemaMercado.model.entities.Produto;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class ProdutoService {
-    private List<Produto> bancoProdutos;
+    private final ProdutoDAO produtoDAO = new ProdutoDAO();
 
-    public ProdutoService() {
-        bancoProdutos = new ArrayList<>();
-    }
-
-    public List<Produto> getBancoProdutos() {
-        return bancoProdutos;
-    }
-
-
-    // métodos públicos
     public void criarProduto(Produto produto) throws DadosIncorretosException {
         if (produto == null) {
             throw new DadosIncorretosException("Produto inválido");
         }
-        for (Produto p : bancoProdutos) {
-            if (p.getCodigoBarras().equals(produto.getCodigoBarras())) {
-                throw new DadosIncorretosException("Produto já cadastrado");
-            }
+        if (produtoDAO.buscarPorCodigoBarras(produto.getCodigoBarras()) != null) {
+            throw new DadosIncorretosException("Produto já cadastrado");
         }
-        bancoProdutos.add(produto);
-        System.out.println("Produto cadastrado com sucesso.");
+        produtoDAO.inserir(produto);
     }
 
-    public void listarProduto(Produto produto) {
-        if (bancoProdutos.isEmpty()) {
-            System.out.println("Nenhum produto cadastrado");
-            return;
-        } else {
-            for (Produto p : bancoProdutos) {
-                System.out.println("ID: " + p.getIdProduto());
-                System.out.println("Nome: " + p.getNome());
-                System.out.println("Código de barras: " + p.getCodigoBarras());
-                System.out.println("Quantidade em estoque: " + p.getQuantidadeEstoque());
-                System.out.println("Preço: " + p.getPreco());
-                System.out.println("----------------------------------");
-            }
-        }
+    public List<Produto> listarProdutos() {
+        return produtoDAO.listarTodos();
     }
 
-    public boolean removerProduto(String nome) throws DadosIncorretosException {
-        for (int i = 0; i < bancoProdutos.size(); i++) {
-            if (bancoProdutos.get(i).getNome().equals(nome)) {
-                bancoProdutos.remove(i);
-                System.out.println("Produto removido com sucesso");
-                return true;
+    public void removerProduto(String nome) throws DadosIncorretosException {
+        for (Produto p : produtoDAO.listarTodos()) {
+            if (p.getNome().equals(nome)) {
+                produtoDAO.deletar(p.getIdProduto());
+                return;
             }
         }
         throw new DadosIncorretosException("Produto não encontrado.");
     }
 
     public void alterarDados(Produto produto, String novoNome, double novoPreco) throws DadosIncorretosException {
-        if (produto == null || !bancoProdutos.contains(produto)) {
+        if (produto == null) {
             throw new DadosIncorretosException("Produto não encontrado.");
-        } if (novoNome != null && !novoNome.isEmpty()) {
+        }
+        if (novoNome != null && !novoNome.isEmpty()) {
             produto.setNome(novoNome);
-        } if (novoPreco > 0) {
+        }
+        if (novoPreco > 0) {
             produto.setPreco(novoPreco);
         }
+        produtoDAO.atualizar(produto);
     }
 
     public Produto pesquisarPorCodigo(String codigoBarras) throws DadosIncorretosException {
-        for (Produto p : bancoProdutos) {
-            if (p.getCodigoBarras().equals(codigoBarras)) {
-                return p;
-            }
+        Produto produto = produtoDAO.buscarPorCodigoBarras(codigoBarras);
+        if (produto == null) {
+            throw new DadosIncorretosException("Produto não encontrado.");
         }
-        throw new DadosIncorretosException("Produto não encontrado.");
+        return produto;
     }
 
     public List<Produto> pesquisarPorNome(String nome) throws DadosIncorretosException {
-        List<Produto> encontrados = new ArrayList<>();
-        for (Produto p : bancoProdutos) {
-            if (p.getNome().toLowerCase().contains(nome.toLowerCase())) {
-                encontrados.add(p);
-            }
-        }
+        List<Produto> encontrados = produtoDAO.buscarPorNome(nome);
         if (encontrados.isEmpty()) {
             throw new DadosIncorretosException("Nenhum produto encontrado com esse nome.");
         }
