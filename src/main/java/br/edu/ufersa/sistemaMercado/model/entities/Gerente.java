@@ -4,4 +4,9 @@ public class Gerente extends Usuario {
     public Gerente(int idUsuario, String nome, String senha) {
         super(idUsuario, nome, senha);
     }
+
+    @Override
+    public PerfilUsuario getPerfil() {
+        return PerfilUsuario.GERENTE;
+    }
 }

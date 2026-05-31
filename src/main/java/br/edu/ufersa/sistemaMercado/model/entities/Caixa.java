@@ -5,6 +5,11 @@ public class Caixa extends Usuario {
         super(idUsuario, nome, senha);
     }
 
+    @Override
+    public PerfilUsuario getPerfil() {
+        return PerfilUsuario.CAIXA;
+    }
+
     /*public void comprarProduto(String codigoBarras, int quantidade) {
         for (Produto produto : sistema.getBancoProdutos()) {
             if (produto.getCodigoBarras().equals(codigoBarras)) {

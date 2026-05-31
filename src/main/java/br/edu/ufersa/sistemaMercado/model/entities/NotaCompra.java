@@ -19,14 +19,18 @@ public class NotaCompra {
     }
 
     public NotaCompra(int numeroNota, LocalDate dataHora, double valorTotal) {
-		super();
 		this.numeroNota = numeroNota;
 		this.dataHora = dataHora;
 		this.valorTotal = valorTotal;
+		this.listaItens = new ArrayList<>();
 	}
 
     public int getNumeroNota() {
         return numeroNota;
+    }
+
+    public void setNumeroNota(int numeroNota) {
+        this.numeroNota = numeroNota;
     }
 
     public List<ItemNota> getListaItens() {
@@ -35,6 +39,10 @@ public class NotaCompra {
 
     public LocalDate getDataHora() {
         return dataHora;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
     }
 
     public void setValorTotal(double valorTotal) throws DadosIncorretosException {

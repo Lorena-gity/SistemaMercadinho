@@ -15,7 +15,11 @@ public class TipoProduto {
 	public int getIdTipo() {
         return idTipo;
     }
-   
+
+    public void setIdTipo(int idTipo) {
+        this.idTipo = idTipo;
+    }
+
     public String getNome() {
         return nome;
     }

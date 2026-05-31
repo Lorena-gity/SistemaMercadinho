@@ -20,7 +20,11 @@ public abstract class Usuario {
 	public int getIdUsuario() {
         return idUsuario;
     }
-    
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
     public String getNome() {
     	return nome;
     }
@@ -29,6 +33,11 @@ public abstract class Usuario {
         return senha;
     }
 
+    public abstract PerfilUsuario getPerfil();
+
+    public boolean autenticar(String senhaDigitada) {
+        return this.senha != null && this.senha.equals(senhaDigitada);
+    }
 
     public void setNome(String novoNome) throws DadosIncorretosException { // para alterar o nome atual do usuário é necessário que o novo nome seja preenchido e que não seja igual ao anterior
         if (novoNome == null || novoNome.isEmpty()) {

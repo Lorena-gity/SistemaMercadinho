@@ -9,28 +9,30 @@ public class Produto {
     private int quantidadeEstoque;
     private double preco;
     private TipoProduto tipo;
-    private Marca marca;
     private FormaDeVenda formaDeVenda;
 
     // Construtores
     public Produto() {}
-    
-    public Produto(int idProduto, String codigoBarras, String nome, int quantidadeEstoque, double preco, TipoProduto tipo, Marca marca, FormaDeVenda formaDeVenda) {
+
+    public Produto(int idProduto, String codigoBarras, String nome, int quantidadeEstoque, double preco, TipoProduto tipo, FormaDeVenda formaDeVenda) {
 		this.idProduto = idProduto;
 		this.codigoBarras = codigoBarras;
 		this.nome = nome;
 		this.quantidadeEstoque = quantidadeEstoque;
 		this.preco = preco;
 		this.tipo = tipo;
-        this.marca = marca;
         this.formaDeVenda = formaDeVenda;
-	}   
+	}
 
 	// Getters e Setters
     public int getIdProduto() {
         return idProduto;
     }
-   
+
+    public void setIdProduto(int idProduto) {
+        this.idProduto = idProduto;
+    }
+
     public String getCodigoBarras() {
         return codigoBarras;
     }
@@ -50,8 +52,6 @@ public class Produto {
     public TipoProduto getTipo() {
         return tipo;
     }
-
-    public Marca getMarca() { return marca; }
 
     public FormaDeVenda getFormaDeVenda() { return formaDeVenda; }
 
@@ -93,14 +93,6 @@ public class Produto {
             throw new DadosIncorretosException("Preço inválido");
         } else {
             this.preco = preco;
-        }
-    }
-
-    public void setMarca(Marca marca) throws DadosIncorretosException {
-        if (marca == null) {
-            throw new DadosIncorretosException("Marca inválida.");
-        } else {
-            this.marca = marca;
         }
     }
 
