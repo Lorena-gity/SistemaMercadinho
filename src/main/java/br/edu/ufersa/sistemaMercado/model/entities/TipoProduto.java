@@ -1,5 +1,7 @@
 package br.edu.ufersa.sistemaMercado.model.entities;
 
+import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
+
 public class TipoProduto {
     private int idTipo;
     private String nome;
@@ -24,9 +26,9 @@ public class TipoProduto {
         return nome;
     }
 
-    public void setNome(String nome) {
+    public void setNome(String nome) throws DadosInvalidosException {
         if (nome == null || nome.isEmpty()) {
-            System.out.println("Nome inválido");
+            throw new DadosInvalidosException("Nome inválido");
         } else {
             this.nome = nome;
         }

@@ -1,6 +1,7 @@
 package br.edu.ufersa.sistemaMercado.model.entities;
 
-import br.edu.ufersa.sistemaMercado.exceptions.DadosIncorretosException;
+import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
+import br.edu.ufersa.sistemaMercado.exceptions.RegistroDuplicadoException;
 
 public abstract class Usuario {
     private int idUsuario;
@@ -39,21 +40,21 @@ public abstract class Usuario {
         return this.senha != null && this.senha.equals(senhaDigitada);
     }
 
-    public void setNome(String novoNome) throws DadosIncorretosException { // para alterar o nome atual do usuário é necessário que o novo nome seja preenchido e que não seja igual ao anterior
+    public void setNome(String novoNome) throws DadosInvalidosException, RegistroDuplicadoException { // para alterar o nome atual do usuário é necessário que o novo nome seja preenchido e que não seja igual ao anterior
         if (novoNome == null || novoNome.isEmpty()) {
-            throw new DadosIncorretosException("Nome não pode ser vazio.");
+            throw new DadosInvalidosException("Nome não pode ser vazio.");
         } else if (this.nome != null && novoNome.equals(this.nome)) { // .equals é usado para comparar o texto ( "==" iria comparar endereço de memória)
-            throw new DadosIncorretosException("Novo nome deve ser diferente do nome atual.");
+            throw new RegistroDuplicadoException("Novo nome deve ser diferente do nome atual.");
         } else {
             this.nome = novoNome;
         }
     }
 
-    public void setSenha(String novaSenha) throws DadosIncorretosException {
+    public void setSenha(String novaSenha) throws DadosInvalidosException, RegistroDuplicadoException {
         if (novaSenha == null || novaSenha.isEmpty()) {
-            throw new DadosIncorretosException("Senha não pode ser vazia.");
+            throw new DadosInvalidosException("Senha não pode ser vazia.");
         } else if (this.senha != null && novaSenha.equals(this.senha)) {
-            throw new DadosIncorretosException("Nova senha deve ser diferente da senha atual.");
+            throw new RegistroDuplicadoException("Nova senha deve ser diferente da senha atual.");
         } else {
             this.senha = novaSenha;
         }

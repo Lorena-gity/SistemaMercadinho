@@ -1,6 +1,6 @@
 package br.edu.ufersa.sistemaMercado.model.entities;
 
-import br.edu.ufersa.sistemaMercado.exceptions.DadosIncorretosException;
+import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
 
 public class Produto {
     private int idProduto;
@@ -56,49 +56,49 @@ public class Produto {
     public FormaDeVenda getFormaDeVenda() { return formaDeVenda; }
 
 
-    public void setNome(String nome) throws DadosIncorretosException {
+    public void setNome(String nome) throws DadosInvalidosException {
     	if (nome == null || nome.isEmpty()) {
-            throw new DadosIncorretosException("Nome de produto inválido.");
+            throw new DadosInvalidosException("Nome de produto inválido.");
         } else {
             this.nome = nome;
         }
     }
 
-    public void setCodigoBarras(String codigoBarras) throws DadosIncorretosException {
+    public void setCodigoBarras(String codigoBarras) throws DadosInvalidosException {
         if (codigoBarras == null || codigoBarras.length() != 13) {
-            throw new DadosIncorretosException("Código de barras inválido.");
+            throw new DadosInvalidosException("Código de barras inválido.");
         } else {
             this.codigoBarras = codigoBarras;
         }
     }
 
-    public void setTipo(TipoProduto tipo) throws DadosIncorretosException {
+    public void setTipo(TipoProduto tipo) throws DadosInvalidosException {
         if (tipo == null) {
-            throw new DadosIncorretosException("Categoria inválida");
+            throw new DadosInvalidosException("Categoria inválida");
         } else {
             this.tipo = tipo;
         }
     }
 
-    public void setQuantidadeEstoque(int quantidadeEstoque) throws DadosIncorretosException {
+    public void setQuantidadeEstoque(int quantidadeEstoque) throws DadosInvalidosException {
         if (quantidadeEstoque < 0) {
-            throw new DadosIncorretosException("Quantidade inválida");
+            throw new DadosInvalidosException("Quantidade inválida");
         } else {
             this.quantidadeEstoque = quantidadeEstoque;
         }
     }
 
-    public void setPreco(double preco) throws DadosIncorretosException {
+    public void setPreco(double preco) throws DadosInvalidosException {
         if (preco <= 0) {
-            throw new DadosIncorretosException("Preço inválido");
+            throw new DadosInvalidosException("Preço inválido");
         } else {
             this.preco = preco;
         }
     }
 
-    public void setFormaDeVenda(FormaDeVenda formaDeVenda) throws DadosIncorretosException {
+    public void setFormaDeVenda(FormaDeVenda formaDeVenda) throws DadosInvalidosException {
         if (formaDeVenda == null) {
-            throw new DadosIncorretosException("Forma de venda inválida");
+            throw new DadosInvalidosException("Forma de venda inválida");
         } else {
             this.formaDeVenda = formaDeVenda;
         }

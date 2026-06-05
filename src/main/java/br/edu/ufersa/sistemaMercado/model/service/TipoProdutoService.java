@@ -1,7 +1,9 @@
 package br.edu.ufersa.sistemaMercado.model.service;
 
-import br.edu.ufersa.sistemaMercado.exceptions.DadosIncorretosException;
-import br.edu.ufersa.sistemaMercado.model.dao.TipoProdutoDAO;
+import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
+import br.edu.ufersa.sistemaMercado.exceptions.ElementoNaoEncontradoException;
+import br.edu.ufersa.sistemaMercado.exceptions.RegistroDuplicadoException;
+import br.edu.ufersa.sistemaMercado.model.DAO.TipoProdutoDAO;
 import br.edu.ufersa.sistemaMercado.model.entities.TipoProduto;
 
 import java.util.List;
@@ -9,12 +11,12 @@ import java.util.List;
 public class TipoProdutoService {
     private final TipoProdutoDAO tipoDAO = new TipoProdutoDAO();
 
-    public void criarTipoProduto(TipoProduto tipo) throws DadosIncorretosException {
+    public void criarTipoProduto(TipoProduto tipo) throws DadosInvalidosException, RegistroDuplicadoException {
         if (tipo == null) {
-            throw new DadosIncorretosException("Tipo inválido");
+            throw new DadosInvalidosException("Tipo inválido");
         }
         if (tipoDAO.buscarPorNome(tipo.getNome()) != null) {
-            throw new DadosIncorretosException("Tipo já cadastrado");
+            throw new RegistroDuplicadoException("Tipo já cadastrado");
         }
         tipoDAO.inserir(tipo);
     }
@@ -23,19 +25,19 @@ public class TipoProdutoService {
         return tipoDAO.listarTodos();
     }
 
-    public void removerTipo(String nome) throws DadosIncorretosException {
+    public void removerTipo(String nome) throws ElementoNaoEncontradoException {
         for (TipoProduto t : tipoDAO.listarTodos()) {
             if (t.getNome().equals(nome)) {
                 tipoDAO.deletar(t.getIdTipo());
                 return;
             }
         }
-        throw new DadosIncorretosException("Tipo não encontrado.");
+        throw new ElementoNaoEncontradoException("Tipo não encontrado.");
     }
 
-    public void atualizarTipo(TipoProduto tipo, String novoNome) throws DadosIncorretosException {
+    public void atualizarTipo(TipoProduto tipo, String novoNome) throws ElementoNaoEncontradoException {
         if (tipo == null) {
-            throw new DadosIncorretosException("Tipo não encontrado");
+            throw new ElementoNaoEncontradoException("Tipo não encontrado");
         }
         if (novoNome != null && !novoNome.isEmpty()) {
             tipo.setNome(novoNome);

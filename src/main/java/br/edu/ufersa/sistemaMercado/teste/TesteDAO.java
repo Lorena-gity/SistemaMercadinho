@@ -1,6 +1,6 @@
 package br.edu.ufersa.sistemaMercado.teste;
 
-import br.edu.ufersa.sistemaMercado.exceptions.DadosIncorretosException;
+import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
 import br.edu.ufersa.sistemaMercado.model.DAO.TipoProdutoDAO;
 import br.edu.ufersa.sistemaMercado.model.entities.FormaDeVenda;
 import br.edu.ufersa.sistemaMercado.model.entities.NotaCompra;
@@ -24,7 +24,7 @@ public class TesteDAO {
         try {
             tipoService.criarTipoProduto(new TipoProduto(0, "Limpeza"));
             System.out.println("Tipo 'Limpeza' cadastrado.");
-        } catch (DadosIncorretosException e) {
+        } catch (DadosInvalidosException e) {
             System.out.println("Aviso: " + e.getMessage());
         }
 
@@ -35,7 +35,7 @@ public class TesteDAO {
                     30, 24.90, alimentos, FormaDeVenda.UNIDADE);
             produtoService.criarProduto(arroz);
             System.out.println("Produto cadastrado com id = " + arroz.getIdProduto());
-        } catch (DadosIncorretosException e) {
+        } catch (DadosInvalidosException e) {
             System.out.println("Aviso: " + e.getMessage());
         }
 
@@ -49,7 +49,7 @@ public class TesteDAO {
         try {
             Produto achado = produtoService.pesquisarPorCodigo("7891111111111");
             System.out.println("Encontrado: " + achado.getNome());
-        } catch (DadosIncorretosException e) {
+        } catch (DadosInvalidosException e) {
             System.out.println("Aviso: " + e.getMessage());
         }
 
@@ -58,7 +58,7 @@ public class TesteDAO {
             Produto arroz = produtoService.pesquisarPorCodigo("7891111111111");
             produtoService.alterarDados(arroz, "Arroz 5kg (Promoção)", 19.90);
             System.out.println("Produto alterado: " + arroz.getNome() + " - R$ " + arroz.getPreco());
-        } catch (DadosIncorretosException e) {
+        } catch (DadosInvalidosException e) {
             System.out.println("Aviso: " + e.getMessage());
         }
 
@@ -66,7 +66,7 @@ public class TesteDAO {
         try {
             Usuario logado = usuarioService.login("admin", "1234");
             System.out.println("Logado: " + logado.getNome() + " (" + logado.getPerfil() + ")");
-        } catch (DadosIncorretosException e) {
+        } catch (DadosInvalidosException e) {
             System.out.println("Falha no login: " + e.getMessage());
         }
 
@@ -83,7 +83,7 @@ public class TesteDAO {
             System.out.println("Venda registrada! Nota nº " + nota.getNumeroNota());
             System.out.println("Total: R$ " + nota.getValorTotal());
             System.out.println("Estoque: " + estoqueAntes + " -> " + depois.getQuantidadeEstoque());
-        } catch (DadosIncorretosException e) {
+        } catch (DadosInvalidosException e) {
             System.out.println("Falha na venda: " + e.getMessage());
         }
 

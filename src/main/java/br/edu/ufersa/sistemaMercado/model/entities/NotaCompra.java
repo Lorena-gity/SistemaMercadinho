@@ -1,10 +1,9 @@
 package br.edu.ufersa.sistemaMercado.model.entities;
-import br.edu.ufersa.sistemaMercado.exceptions.DadosIncorretosException;
+import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Iterator;
 
 public class NotaCompra {
     private int numeroNota;
@@ -45,9 +44,9 @@ public class NotaCompra {
         return valorTotal;
     }
 
-    public void setValorTotal(double valorTotal) throws DadosIncorretosException {
+    public void setValorTotal(double valorTotal) throws DadosInvalidosException {
         if (valorTotal < 0) {
-            throw new DadosIncorretosException("Valor total não pode ser negativo");
+            throw new DadosInvalidosException("Valor total não pode ser negativo");
         } else {
             this.valorTotal = valorTotal;
         }

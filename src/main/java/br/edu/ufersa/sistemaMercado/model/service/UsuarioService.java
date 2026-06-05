@@ -1,7 +1,9 @@
 package br.edu.ufersa.sistemaMercado.model.service;
 
-import br.edu.ufersa.sistemaMercado.exceptions.DadosIncorretosException;
-import br.edu.ufersa.sistemaMercado.model.dao.UsuarioDAO;
+import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
+import br.edu.ufersa.sistemaMercado.exceptions.ElementoNaoEncontradoException;
+import br.edu.ufersa.sistemaMercado.exceptions.RegistroDuplicadoException;
+import br.edu.ufersa.sistemaMercado.model.DAO.UsuarioDAO;
 import br.edu.ufersa.sistemaMercado.model.entities.Usuario;
 
 import java.util.List;
@@ -9,20 +11,20 @@ import java.util.List;
 public class UsuarioService {
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
-    public Usuario login(String nome, String senha) throws DadosIncorretosException {
+    public Usuario login(String nome, String senha) throws DadosInvalidosException {
         Usuario usuario = usuarioDAO.buscarPorNome(nome);
         if (usuario == null || !usuario.autenticar(senha)) {
-            throw new DadosIncorretosException("Nome ou senha incorretos.");
+            throw new DadosInvalidosException("Nome ou senha incorretos.");
         }
         return usuario;
     }
 
-    public void cadastrarUsuario(Usuario usuario) throws DadosIncorretosException {
+    public void cadastrarUsuario(Usuario usuario) throws DadosInvalidosException, RegistroDuplicadoException {
         if (usuario == null) {
-            throw new DadosIncorretosException("Usuário inválido.");
+            throw new DadosInvalidosException("Usuário inválido.");
         }
         if (usuarioDAO.buscarPorNome(usuario.getNome()) != null) {
-            throw new DadosIncorretosException("Usuário já cadastrado");
+            throw new RegistroDuplicadoException("Usuário já cadastrado");
         }
         usuarioDAO.inserir(usuario);
     }
@@ -31,9 +33,9 @@ public class UsuarioService {
         return usuarioDAO.listarTodos();
     }
 
-    public void alterarDados(Usuario usuario, String novaSenha, String novoNome) throws DadosIncorretosException {
+    public void alterarDados(Usuario usuario, String novaSenha, String novoNome) throws DadosInvalidosException {
         if (usuario == null) {
-            throw new DadosIncorretosException("Usuário inválido.");
+            throw new DadosInvalidosException("Usuário inválido.");
         }
         if (novoNome != null && !novoNome.isEmpty()) {
             usuario.setNome(novoNome);
@@ -44,9 +46,9 @@ public class UsuarioService {
         usuarioDAO.atualizar(usuario);
     }
 
-    public void removerUsuario(Usuario usuario) throws DadosIncorretosException {
+    public void removerUsuario(Usuario usuario) throws ElementoNaoEncontradoException {
         if (usuario == null) {
-            throw new DadosIncorretosException("Usuário não encontrado.");
+            throw new ElementoNaoEncontradoException("Usuário não encontrado.");
         }
         usuarioDAO.deletar(usuario.getIdUsuario());
     }

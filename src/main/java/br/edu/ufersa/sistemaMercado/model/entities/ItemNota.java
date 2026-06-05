@@ -1,5 +1,7 @@
 package br.edu.ufersa.sistemaMercado.model.entities;
 
+import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
+
 public class ItemNota {
     private int quantidade;
     private double precoUnitario;
@@ -27,25 +29,25 @@ public class ItemNota {
 		return produto;
 	}
 	
-	public void setProduto(Produto produto) {
+	public void setProduto(Produto produto) throws DadosInvalidosException {
         if (produto == null) {
-            System.out.println("Produto inválido!");
+            throw new DadosInvalidosException("Produto inválido!");
         } else {
             this.produto = produto;
         }
     }
 
-    public void setQuantidade(int quantidade) {
+    public void setQuantidade(int quantidade) throws DadosInvalidosException {
         if (quantidade <= 0) {
-            System.out.println("Quantidade inválida");
+            throw new DadosInvalidosException("Quantidade inválida");
         } else {
             this.quantidade = quantidade;
         }
     }
 
-    public void setPrecoUnitario(double precoUnitario) {
+    public void setPrecoUnitario(double precoUnitario) throws DadosInvalidosException {
         if (precoUnitario <= 0) {
-            System.out.println("Preço inválido");
+            throw new DadosInvalidosException("Preço inválido");
         } else {
             this.precoUnitario = precoUnitario;
         }
