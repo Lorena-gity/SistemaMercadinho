@@ -1,9 +1,8 @@
 package br.edu.ufersa.sistemaMercado.model.DAO;
 
-import br.edu.ufersa.sistemaMercado.model.entities.Caixa;
-import br.edu.ufersa.sistemaMercado.model.entities.Gerente;
 import br.edu.ufersa.sistemaMercado.model.entities.PerfilUsuario;
 import br.edu.ufersa.sistemaMercado.model.entities.Usuario;
+import br.edu.ufersa.sistemaMercado.model.factory.UsuarioFactory;
 import br.edu.ufersa.sistemaMercado.util.ConexaoBD;
 
 import java.sql.Connection;
@@ -117,10 +116,11 @@ public class UsuarioDAO implements DAO<Usuario> {
         String senha = rs.getString("senha");
         PerfilUsuario perfil = PerfilUsuario.valueOf(rs.getString("perfil"));
 
-        if (perfil == PerfilUsuario.GERENTE) {
-            return new Gerente(id, nome, senha);
-        } else {
-            return new Caixa(id, nome, senha);
-        }
+        return UsuarioFactory.criarUsuario(
+                perfil,
+                id,
+                nome,
+                senha
+        );
     }
 }

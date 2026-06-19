@@ -35,7 +35,7 @@ public class TipoProdutoService {
         throw new ElementoNaoEncontradoException("Tipo não encontrado.");
     }
 
-    public void atualizarTipo(TipoProduto tipo, String novoNome) throws ElementoNaoEncontradoException {
+    public void atualizarTipo(TipoProduto tipo, String novoNome) throws ElementoNaoEncontradoException, DadosInvalidosException {
         if (tipo == null) {
             throw new ElementoNaoEncontradoException("Tipo não encontrado");
         }
