@@ -49,7 +49,7 @@ public class ProdutoService {
         produtoDAO.atualizar(produto);
     }
 
-    public Produto pesquisarPorCodigo(String codigoBarras) throws ElementoNaoEncontradoException {
+    public Produto pesquisarPorCodigo(String codigoBarras) throws ElementoNaoEncontradoException, DadosInvalidosException {
         Produto produto = produtoDAO.buscarPorCodigoBarras(codigoBarras);
         if (produto == null) {
             throw new ElementoNaoEncontradoException("Produto não encontrado.");
