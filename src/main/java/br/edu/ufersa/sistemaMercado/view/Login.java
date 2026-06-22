@@ -1,5 +1,6 @@
 package br.edu.ufersa.sistemaMercado.view;
 
+import br.edu.ufersa.sistemaMercado.controller.LoginController;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -107,6 +108,17 @@ public class Login extends Application {
                         "-fx-cursor: hand;"
         );
         VBox.setMargin(btnEntrar, new Insets(10, 0, 0, 0));
+
+        LoginController controller = new LoginController();
+
+        // Definindo o evento de clique do botão
+        btnEntrar.setOnAction(event -> {
+            String usuarioDigitado = txtUsuario.getText();
+            String senhaDigitada = txtSenha.getText();
+
+            // Passa os dados e a janela atual (primaryStage) para o controller
+            controller.autenticar(usuarioDigitado, senhaDigitada, primaryStage);
+        });
 
         // Adiciona os componentes ao Card
         loginCard.getChildren().addAll(lblWelcome, txtUsuario, txtSenha, btnEntrar);
