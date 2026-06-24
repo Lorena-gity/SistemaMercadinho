@@ -17,7 +17,7 @@ CREATE TABLE tipo_produto (
 
 CREATE TABLE produto (
     id_produto         INT AUTO_INCREMENT PRIMARY KEY,
-    codigo_barras      VARCHAR(13) NOT NULL UNIQUE,
+    codigo_barras      VARCHAR(13) NULL UNIQUE,
     nome               VARCHAR(150) NOT NULL,
     quantidade_estoque INT NOT NULL DEFAULT 0,
     preco              DECIMAL(10,2) NOT NULL,
@@ -48,6 +48,26 @@ CREATE TABLE item_nota (
     CONSTRAINT fk_item_nota    FOREIGN KEY (numero_nota) REFERENCES nota_compra(numero_nota),
     CONSTRAINT fk_item_produto FOREIGN KEY (id_produto)  REFERENCES produto(id_produto)
 );
+
+DROP TRIGGER IF EXISTS gerar_codigo_barras;
+
+DELIMITER $$
+
+CREATE TRIGGER gerar_codigo_barras
+    BEFORE INSERT ON produto
+    FOR EACH ROW
+BEGIN
+    IF NEW.codigo_barras IS NULL THEN
+        SET NEW.codigo_barras = LPAD(
+            (SELECT AUTO_INCREMENT
+             FROM information_schema.TABLES
+             WHERE TABLE_SCHEMA = 'mercadinho'
+             AND TABLE_NAME = 'produto'),
+        13, '0');
+END IF;
+END$$
+
+DELIMITER ;
 
 INSERT INTO usuario (nome, senha, perfil) VALUES
     ('admin', '1234', 'GERENTE'),

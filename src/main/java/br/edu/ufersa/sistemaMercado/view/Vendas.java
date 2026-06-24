@@ -1,11 +1,14 @@
-// ADICIONAR: PUXAR CATEGORIAS DE BANCOTIPOS
-
 package br.edu.ufersa.sistemaMercado.view;
 
 import br.edu.ufersa.sistemaMercado.controller.VendasController;
 import br.edu.ufersa.sistemaMercado.controller.VendasController.ItemCarrinho;
 import br.edu.ufersa.sistemaMercado.model.entities.Usuario;
 import br.edu.ufersa.sistemaMercado.model.entities.Produto;
+import br.edu.ufersa.sistemaMercado.model.entities.TipoProduto;
+import br.edu.ufersa.sistemaMercado.model.entities.FormaDeVenda;
+import br.edu.ufersa.sistemaMercado.model.service.TipoProdutoService;
+import br.edu.ufersa.sistemaMercado.model.session.SessaoUsuario;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -28,11 +31,14 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 import java.util.List;
 
 public class Vendas extends Application {
-    private Usuario usuarioLogado;
+
+    // ✅ busca o usuário da sessão global
+    private Usuario usuarioLogado = SessaoUsuario.getInstancia().getUsuarioLogado();
     private VBox listaProdutosRecentes;
     private VBox listaProdutosCarrinho;
     private Label lblQtdValor;
@@ -51,6 +57,11 @@ public class Vendas extends Application {
         this.usuarioLogado = usuario;
     }
 
+    private boolean isGerente() {
+        if (usuarioLogado == null) return false;
+        return usuarioLogado.getClass().getSimpleName().equalsIgnoreCase("Gerente");
+    }
+
     @Override
     public void start(Stage primaryStage) {
         if (usuarioLogado == null) {
@@ -61,6 +72,7 @@ public class Vendas extends Application {
         BorderPane root = new BorderPane();
         root.setStyle("-fx-background-color: #F4F5F4; -fx-font-family: 'Roboto', sans-serif;");
 
+        // === HEADER ===
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(15, 30, 15, 30));
@@ -96,7 +108,7 @@ public class Vendas extends Application {
         HBox usuarioBox = new HBox(15);
         usuarioBox.setAlignment(Pos.CENTER_RIGHT);
 
-        Label lblFuncionario = new Label(usuarioLogado.getNome());
+        Label lblFuncionario = new Label(usuarioLogado.getNome() + (isGerente() ? " (Gerente)" : ""));
         lblFuncionario.setStyle("-fx-text-fill: #FFFFFF; -fx-background-color: #033B29; -fx-padding: 8 15 8 15; -fx-background-radius: 20; -fx-font-weight: bold;");
         try {
             Image imgUser = new Image(getClass().getResourceAsStream("/images/iconUsuario.png"));
@@ -120,13 +132,14 @@ public class Vendas extends Application {
             System.out.println("Erro ao carregar imagem: iconSair.png");
         }
 
+        // ✅ encerra a sessão ao sair
         btnSair.setOnAction(e -> {
+            SessaoUsuario.getInstancia().encerrarSessao();
+            primaryStage.close();
             try {
-                primaryStage.close();
-                Login telaLogin = new Login();
-                telaLogin.start(new Stage());
+                new Login().start(new Stage());
             } catch (Exception ex) {
-                System.out.println("Erro ao abrir a tela de login: " + ex.getMessage());
+                System.out.println("Erro ao abrir login: " + ex.getMessage());
             }
         });
 
@@ -134,10 +147,13 @@ public class Vendas extends Application {
         header.getChildren().addAll(logoETituloContainer, spacerHeader, usuarioBox);
         root.setTop(header);
 
+        // === CONTEÚDO CENTRAL ===
         VBox centroContainer = new VBox(20);
         centroContainer.setPadding(new Insets(20, 30, 20, 30));
 
-        HBox navBar = new HBox();
+        // --- NAVIGATION BAR ---
+        HBox navBar = new HBox(20);
+
         Label tabProdutos = new Label("Produtos");
         tabProdutos.setStyle("-fx-text-fill: #02261A; -fx-font-weight: bold; -fx-border-color: #02261A; -fx-border-width: 0 0 3 0; -fx-padding: 0 10 5 10;");
         try {
@@ -146,11 +162,32 @@ public class Vendas extends Application {
             viewProd.setFitWidth(16);
             viewProd.setPreserveRatio(true);
             tabProdutos.setGraphic(viewProd);
-        } catch (Exception e) {
-            System.out.println("Erro ao carregar imagem: iconProduto.png");
-        }
+        } catch (Exception e) {}
         navBar.getChildren().add(tabProdutos);
 
+        if (isGerente()) {
+            Label tabFuncionarios = new Label("Funcionários");
+            tabFuncionarios.setStyle("-fx-text-fill: #A0A5A2; -fx-font-weight: bold; -fx-padding: 0 10 5 10; -fx-cursor: hand;");
+            try {
+                Image imgFunc = new Image(getClass().getResourceAsStream("/images/iconFuncionario.png"));
+                ImageView viewFunc = new ImageView(imgFunc);
+                viewFunc.setFitWidth(16);
+                viewFunc.setPreserveRatio(true);
+                tabFuncionarios.setGraphic(viewFunc);
+            } catch (Exception e) {}
+
+            tabFuncionarios.setOnMouseClicked(e -> {
+                primaryStage.close();
+                try {
+                    new GerenciarFuncionarios(usuarioLogado).start(new Stage());
+                } catch (Exception ex) {
+                    System.out.println("Erro ao abrir tela de funcionários.");
+                }
+            });
+            navBar.getChildren().add(tabFuncionarios);
+        }
+
+        // --- AÇÕES ---
         HBox acoesBar = new HBox(15);
         acoesBar.setAlignment(Pos.CENTER_LEFT);
 
@@ -162,9 +199,7 @@ public class Vendas extends Application {
             viewCheck.setFitWidth(14);
             viewCheck.setPreserveRatio(true);
             btnFinalizar.setGraphic(viewCheck);
-        } catch (Exception e) {
-            System.out.println("Erro ao carregar imagem: iconVenda.png");
-        }
+        } catch (Exception e) {}
         btnFinalizar.setOnAction(e -> acaoFinalizarVenda());
 
         Button btnCancelar = new Button("Cancelar Venda");
@@ -175,9 +210,7 @@ public class Vendas extends Application {
             viewCancel.setFitWidth(12);
             viewCancel.setPreserveRatio(true);
             btnCancelar.setGraphic(viewCancel);
-        } catch (Exception e) {
-            System.out.println("Erro ao carregar imagem: iconCancelarVenda.png");
-        }
+        } catch (Exception e) {}
         btnCancelar.setOnAction(e -> acaoCancelarVenda());
 
         HBox spacerAcoes = new HBox();
@@ -189,6 +222,7 @@ public class Vendas extends Application {
 
         acoesBar.getChildren().addAll(btnFinalizar, btnCancelar, spacerAcoes, btnComprar);
 
+        // --- CARDS PRINCIPAIS ---
         HBox cardsContainer = new HBox(25);
         HBox.setHgrow(cardsContainer, Priority.ALWAYS);
 
@@ -196,6 +230,7 @@ public class Vendas extends Application {
         cardShadow.setRadius(15);
         cardShadow.setColor(Color.web("#000000", 0.04));
 
+        // CARD ESQUERDO (Carrinho)
         VBox cardEsquerda = new VBox(20);
         HBox.setHgrow(cardEsquerda, Priority.ALWAYS);
         cardEsquerda.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-padding: 25;");
@@ -238,6 +273,7 @@ public class Vendas extends Application {
         resumenBox.getChildren().addAll(qtdItensBox, totalBox);
         cardEsquerda.getChildren().addAll(tabelaHeader, listaProdutosCarrinho, resumenBox);
 
+        // CARD DIREITO (Busca e Recentes)
         VBox cardDireita = new VBox(20);
         cardDireita.setPrefWidth(350);
         cardDireita.setMinWidth(350);
@@ -258,9 +294,7 @@ public class Vendas extends Application {
             viewLupa.setFitWidth(16);
             viewLupa.setPreserveRatio(true);
             campoBuscaContainer.getChildren().add(viewLupa);
-        } catch (Exception e) {
-            System.out.println("Erro ao carregar imagem: iconPesquisa.png");
-        }
+        } catch (Exception e) {}
 
         this.txtBusca = new TextField();
         this.txtBusca.setPromptText("Inserir código de barras ou nome");
@@ -300,14 +334,8 @@ public class Vendas extends Application {
     private void filtrarPainelLateral(String termo) {
         this.listaProdutosRecentes.getChildren().clear();
         List<Produto> produtos = controller.pesquisarProdutos(termo);
-
         for (Produto prod : produtos) {
-            String nomeCategoria = (prod.getTipo() != null) ? prod.getTipo().getNome() : "Geral";
-            String infoPreco = nomeCategoria + " - R$ " + String.format("%.2f", prod.getPreco());
-            String estoqueText = "Estoque atual: " + prod.getQuantidadeEstoque() + " un";
-
-            VBox cardVisual = criarCardProdutoRecente(prod.getNome(), infoPreco, estoqueText);
-            cardVisual.setOnMouseClicked(e -> adicionarProdutoAoCarrinho(prod));
+            HBox cardVisual = criarCardProdutoRecente(prod);
             this.listaProdutosRecentes.getChildren().add(cardVisual);
         }
     }
@@ -373,6 +401,9 @@ public class Vendas extends Application {
         }
     }
 
+    // ==========================================
+    // MODAL DE COMPRA
+    // ==========================================
     private void abrirModalCompra(Stage ownerStage) {
         Stage modalStage = new Stage();
         modalStage.initModality(Modality.WINDOW_MODAL);
@@ -423,20 +454,35 @@ public class Vendas extends Application {
 
         Label lblCategoria = new Label("Categoria");
         lblCategoria.setStyle("-fx-font-weight: bold; -fx-text-fill: #000000;");
-        ComboBox<String> cbCategoria = new ComboBox<>(FXCollections.observableArrayList("Bebidas", "Limpeza", "Alimentos", "Higiene"));
-        cbCategoria.setValue("Selecione");
+
+        TipoProdutoService tipoService = new TipoProdutoService();
+        ObservableList<String> categoriasObs = FXCollections.observableArrayList();
+        try {
+            for (TipoProduto tp : tipoService.listarTipos()) {
+                categoriasObs.add(tp.getNome());
+            }
+        } catch (Exception ex) {}
+
+        ComboBox<String> cbCategoria = new ComboBox<>(categoriasObs);
+        cbCategoria.setValue(categoriasObs.isEmpty() ? "Sem categorias cadastradas" : "Selecione");
         cbCategoria.setPrefWidth(200);
         cbCategoria.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 6;");
         gridCampos.add(lblCategoria, 0, 2);
         gridCampos.add(cbCategoria, 0, 3);
 
-        Label lblTipo = new Label("Tipo");
-        lblTipo.setStyle("-fx-font-weight: bold; -fx-text-fill: #000000;");
-        ComboBox<String> cbTipo = new ComboBox<>(FXCollections.observableArrayList("Geral", "Unidade", "Fardo"));
+        Label lblFormaVenda = new Label("Tipo");
+        lblFormaVenda.setStyle("-fx-font-weight: bold; -fx-text-fill: #000000;");
+
+        ObservableList<String> formasDeVendaObs = FXCollections.observableArrayList();
+        for (FormaDeVenda forma : FormaDeVenda.values()) {
+            formasDeVendaObs.add(forma.name());
+        }
+
+        ComboBox<String> cbTipo = new ComboBox<>(formasDeVendaObs);
         cbTipo.setValue("Selecione");
         cbTipo.setPrefWidth(200);
         cbTipo.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 6;");
-        gridCampos.add(lblTipo, 1, 2);
+        gridCampos.add(lblFormaVenda, 1, 2);
         gridCampos.add(cbTipo, 1, 3);
 
         VBox boxQuantidade = new VBox(5);
@@ -457,13 +503,15 @@ public class Vendas extends Application {
             String tipo = cbTipo.getValue();
             String qtdStr = txtQuantidade.getText().trim();
 
-            if (nome.isEmpty() || precoStr.isEmpty() || qtdStr.isEmpty() || "Selecione".equals(categoria) || "Selecione".equals(tipo)) {
-                mostrarAlerta("Campos Incompletos", "Por favor, preencha todas as informações do produto antes de salvar.", Alert.AlertType.ERROR);
+            if (nome.isEmpty() || precoStr.isEmpty() || qtdStr.isEmpty() ||
+                    "Selecione".equals(categoria) || "Sem categorias cadastradas".equals(categoria) ||
+                    "Selecione".equals(tipo)) {
+                mostrarAlerta("Campos Incompletos", "Por favor, preencha todas as informações do produto.", Alert.AlertType.ERROR);
                 return;
             }
 
             try {
-                double preco = Double.parseDouble(precoStr.replace(",", "."));
+                double preco = Double.parseDouble(precoStr.replace("R$", "").trim().replace(",", "."));
                 int quantidade = Integer.parseInt(qtdStr);
 
                 boolean sucesso = controller.salvarProdutoComprado(nome, preco, categoria, quantidade);
@@ -475,13 +523,143 @@ public class Vendas extends Application {
                 } else {
                     mostrarAlerta("Erro", "Ocorreu um erro interno ao salvar no banco.", Alert.AlertType.ERROR);
                 }
-
             } catch (NumberFormatException ex) {
                 mostrarAlerta("Dados Inválidos", "Valor Unitário e Quantidade devem conter apenas números válidos.", Alert.AlertType.ERROR);
             }
         });
 
         containerModal.getChildren().addAll(boxFechar, lblTituloModal, gridCampos, boxQuantidade, btnSalvar);
+
+        Scene modalScene = new Scene(containerModal);
+        modalScene.setFill(Color.TRANSPARENT);
+        modalStage.setScene(modalScene);
+
+        modalStage.showAndWait();
+        rootDaTelaPrincipal.setEffect(null);
+    }
+
+    // ==========================================
+    // MODAL DE EDIÇÃO
+    // ==========================================
+    private void abrirModalEditar(Stage ownerStage, Produto produto) {
+        Stage modalStage = new Stage();
+        modalStage.initModality(Modality.WINDOW_MODAL);
+        modalStage.initOwner(ownerStage);
+        modalStage.initStyle(StageStyle.TRANSPARENT);
+
+        javafx.scene.Parent rootDaTelaPrincipal = ownerStage.getScene().getRoot();
+
+        javafx.scene.effect.ColorAdjust escurecerFundo = new javafx.scene.effect.ColorAdjust();
+        escurecerFundo.setBrightness(-0.5);
+        javafx.scene.effect.GaussianBlur desfoqueFundo = new javafx.scene.effect.GaussianBlur(5);
+        desfoqueFundo.setInput(escurecerFundo);
+        rootDaTelaPrincipal.setEffect(desfoqueFundo);
+
+        VBox containerModal = new VBox(25);
+        containerModal.setPadding(new Insets(30, 40, 35, 40));
+        containerModal.setStyle("-fx-background-color: #EFEFEF; -fx-background-radius: 16; -fx-alignment: top-center;");
+        containerModal.setPrefWidth(480);
+
+        HBox boxFechar = new HBox();
+        boxFechar.setAlignment(Pos.CENTER_RIGHT);
+        Button btnFecharX = new Button("✕");
+        btnFecharX.setStyle("-fx-background-color: transparent; -fx-text-fill: #000000; -fx-font-size: 16; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 0;");
+        btnFecharX.setOnAction(e -> modalStage.close());
+        boxFechar.getChildren().add(btnFecharX);
+
+        Label lblTituloModal = new Label("Editar Produto");
+        lblTituloModal.setFont(Font.font("Roboto", FontWeight.BOLD, 22));
+        lblTituloModal.setStyle("-fx-text-fill: #000000;");
+
+        GridPane gridCampos = new GridPane();
+        gridCampos.setHgap(20);
+        gridCampos.setVgap(15);
+
+        Label lblNome = new Label("Nome do Produto");
+        lblNome.setStyle("-fx-font-weight: bold; -fx-text-fill: #000000;");
+        TextField txtNome = new TextField(produto.getNome());
+        txtNome.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 6; -fx-padding: 8; -fx-border-width: 0;");
+        gridCampos.add(lblNome, 0, 0);
+        gridCampos.add(txtNome, 0, 1);
+
+        Label lblPreco = new Label("Valor Unitário");
+        lblPreco.setStyle("-fx-font-weight: bold; -fx-text-fill: #000000;");
+        TextField txtPreco = new TextField(String.format("R$ %.2f", produto.getPreco()).replace(",", "."));
+        txtPreco.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 6; -fx-padding: 8; -fx-border-width: 0;");
+        gridCampos.add(lblPreco, 1, 0);
+        gridCampos.add(txtPreco, 1, 1);
+
+        Label lblCategoria = new Label("Categoria");
+        lblCategoria.setStyle("-fx-font-weight: bold; -fx-text-fill: #000000;");
+
+        TipoProdutoService tipoService = new TipoProdutoService();
+        ObservableList<String> categoriasObs = FXCollections.observableArrayList();
+        try {
+            for (TipoProduto tp : tipoService.listarTipos()) {
+                categoriasObs.add(tp.getNome());
+            }
+        } catch (Exception ex) {}
+
+        ComboBox<String> cbCategoria = new ComboBox<>(categoriasObs);
+        String catAtual = (produto.getTipo() != null) ? produto.getTipo().getNome() : "Selecione";
+        cbCategoria.setValue(categoriasObs.contains(catAtual) ? catAtual : "Selecione");
+        cbCategoria.setPrefWidth(200);
+        cbCategoria.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 6;");
+        gridCampos.add(lblCategoria, 0, 2);
+        gridCampos.add(cbCategoria, 0, 3);
+
+        Label lblFormaVenda = new Label("Tipo");
+        lblFormaVenda.setStyle("-fx-font-weight: bold; -fx-text-fill: #000000;");
+
+        ObservableList<String> formasDeVendaObs = FXCollections.observableArrayList();
+        for (FormaDeVenda forma : FormaDeVenda.values()) {
+            formasDeVendaObs.add(forma.name());
+        }
+
+        ComboBox<String> cbTipo = new ComboBox<>(formasDeVendaObs);
+        // ✅ carrega o tipo atual do produto
+        cbTipo.setValue(produto.getFormaDeVenda() != null ? produto.getFormaDeVenda().name() : "Selecione");
+        cbTipo.setPrefWidth(200);
+        cbTipo.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 6;");
+        gridCampos.add(lblFormaVenda, 1, 2);
+        gridCampos.add(cbTipo, 1, 3);
+
+        Button btnSalvar = new Button("Salvar");
+        btnSalvar.setStyle("-fx-background-color: #012417; -fx-text-fill: #FFFFFF; -fx-background-radius: 8; -fx-padding: 10 45 10 45; -fx-font-weight: bold; -fx-cursor: hand;");
+
+        btnSalvar.setOnAction(e -> {
+            String nome = txtNome.getText().trim();
+            String precoStr = txtPreco.getText().trim();
+            String categoria = cbCategoria.getValue();
+            String tipo = cbTipo.getValue();
+
+            if (nome.isEmpty() || precoStr.isEmpty() ||
+                    "Selecione".equals(categoria) || "Sem categorias cadastradas".equals(categoria) ||
+                    "Selecione".equals(tipo)) {
+                mostrarAlerta("Campos Incompletos", "Por favor, preencha todas as informações.", Alert.AlertType.ERROR);
+                return;
+            }
+
+            try {
+                double novoPreco = Double.parseDouble(precoStr.replace("R$", "").trim().replace(",", "."));
+
+                // ✅ agora chama o controller de verdade
+                boolean sucesso = controller.editarProduto(produto, nome, novoPreco, categoria, tipo);
+
+                if (sucesso) {
+                    mostrarAlerta("Sucesso", "Produto editado com sucesso!", Alert.AlertType.INFORMATION);
+                    modalStage.close();
+                    atualizarPainelLateral();
+                } else {
+                    mostrarAlerta("Erro", "Não foi possível editar o produto.", Alert.AlertType.ERROR);
+                }
+
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("Dados Inválidos", "Valor Unitário deve conter apenas números válidos.", Alert.AlertType.ERROR);
+            }
+        });
+
+        containerModal.getChildren().addAll(boxFechar, lblTituloModal, gridCampos, btnSalvar);
 
         Scene modalScene = new Scene(containerModal);
         modalScene.setFill(Color.TRANSPARENT);
@@ -557,34 +735,80 @@ public class Vendas extends Application {
             viewLixo.setFitWidth(14);
             viewLixo.setPreserveRatio(true);
             btnDeletar.setGraphic(viewLixo);
-        } catch (Exception e) {
-            System.out.println("Erro ao carregar imagem: iconLixo.png");
-        }
+        } catch (Exception e) {}
         acaoBox.getChildren().add(btnDeletar);
 
         linha.getChildren().addAll(prodInfo, lblUnitario, seletorQtd, lblTotal, acaoBox);
         return linha;
     }
 
-    private VBox criarCardProdutoRecente(String nome, String infoPreco, String estoque) {
-        VBox card = new VBox(3);
-        card.setStyle("-fx-background-color: #EFEFEF; -fx-background-radius: 8; -fx-padding: 12; -fx-cursor: hand;");
+    private HBox criarCardProdutoRecente(Produto prod) {
+        String nomeCategoria = (prod.getTipo() != null) ? prod.getTipo().getNome() : "Geral";
+        String infoPreco = nomeCategoria + " - R$ " + String.format("%.2f", prod.getPreco());
+        String estoqueText = "Estoque atual: " + prod.getQuantidadeEstoque() + " un";
 
-        Label lblNome = new Label(nome);
+        HBox card = new HBox();
+        card.setAlignment(Pos.CENTER_LEFT);
+        card.setStyle("-fx-background-color: #EFEFEF; -fx-background-radius: 8; -fx-padding: 12;");
+
+        VBox infoBox = new VBox(3);
+        HBox.setHgrow(infoBox, Priority.ALWAYS);
+
+        Label lblNome = new Label(prod.getNome());
         lblNome.setStyle("-fx-font-weight: bold; -fx-text-fill: #222;");
-
         Label lblInfo = new Label(infoPreco);
         lblInfo.setStyle("-fx-text-fill: #555; -fx-font-size: 12;");
-
-        Label lblEstoque = new Label(estoque);
+        Label lblEstoque = new Label(estoqueText);
         lblEstoque.setStyle("-fx-text-fill: #6BB759; -fx-font-size: 11; -fx-font-weight: bold;");
 
-        card.getChildren().addAll(lblNome, lblInfo, lblEstoque);
+        infoBox.getChildren().addAll(lblNome, lblInfo, lblEstoque);
 
-        card.setOnMouseEntered(e -> card.setStyle("-fx-background-color: #E5E5E5; -fx-background-radius: 8; -fx-padding: 12; -fx-cursor: hand;"));
-        card.setOnMouseExited(e -> card.setStyle("-fx-background-color: #EFEFEF; -fx-background-radius: 8; -fx-padding: 12; -fx-cursor: hand;"));
+        infoBox.setStyle("-fx-cursor: hand;");
+        infoBox.setOnMouseClicked(e -> adicionarProdutoAoCarrinho(prod));
+
+        if (isGerente()) {
+            Button btnEditar = new Button();
+            btnEditar.setStyle("-fx-background-color: #E2F0DD; -fx-background-radius: 50; -fx-min-width: 32; -fx-min-height: 32; -fx-max-width: 32; -fx-max-height: 32; -fx-cursor: hand;");
+
+            try {
+                Image imgLapis = new Image(getClass().getResourceAsStream("/images/iconLapis.png"));
+                ImageView viewLapis = new ImageView(imgLapis);
+                viewLapis.setFitWidth(14);
+                viewLapis.setPreserveRatio(true);
+                btnEditar.setGraphic(viewLapis);
+            } catch (Exception e) {}
+
+            btnEditar.setOnAction(e -> abrirModalEditar((Stage) card.getScene().getWindow(), prod));
+            card.getChildren().addAll(infoBox, btnEditar);
+        } else {
+            card.getChildren().add(infoBox);
+        }
+
+        card.setOnMouseEntered(e -> card.setStyle("-fx-background-color: #E5E5E5; -fx-background-radius: 8; -fx-padding: 12;"));
+        card.setOnMouseExited(e -> card.setStyle("-fx-background-color: #EFEFEF; -fx-background-radius: 8; -fx-padding: 12;"));
 
         return card;
+    }
+
+    private void mudarDeTela(Stage stage, Application novaTela) {
+        // Pega a raiz da tela atual
+        javafx.scene.Node rootNode = stage.getScene().getRoot();
+
+        // Cria uma animação de desaparecimento
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(250), rootNode);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+
+        // Quando a animação terminar, carrega a nova tela NO MESMO STAGE
+        fadeOut.setOnFinished(e -> {
+            try {
+                novaTela.start(stage);
+            } catch (Exception ex) {
+                System.out.println("Erro ao mudar de tela: " + ex.getMessage());
+            }
+        });
+
+        fadeOut.play();
     }
 
     public static void main(String[] args) {

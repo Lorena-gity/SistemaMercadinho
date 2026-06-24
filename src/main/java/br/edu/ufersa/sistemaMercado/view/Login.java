@@ -1,6 +1,7 @@
 package br.edu.ufersa.sistemaMercado.view;
 
 import br.edu.ufersa.sistemaMercado.controller.LoginController;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class Login extends Application {
 
@@ -28,6 +30,9 @@ public class Login extends Application {
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(50));
         root.setStyle("-fx-background-color: #F5EBE2;");
+
+        // Deixa a tela invisível inicialmente para o efeito Fade-in
+        root.setOpacity(0.0);
 
         // ---- LADO ESQUERDO: LOGO ----
         VBox leftSection = new VBox();
@@ -136,6 +141,31 @@ public class Login extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
+
+        // Animação de entrada (Fade In)
+        FadeTransition ftIn = new FadeTransition(Duration.millis(300), root);
+        ftIn.setFromValue(0.0);
+        ftIn.setToValue(1.0);
+        ftIn.play();
+    }
+
+    // TRANSIÇÃO DE TELAS (ESTÁTICO PARA O CONTROLLER USAR)
+    public static void mudarDeTela(Stage stage, Application novaTela) {
+        javafx.scene.Node rootNode = stage.getScene().getRoot();
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(250), rootNode);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+
+        fadeOut.setOnFinished(e -> {
+            try {
+                novaTela.start(stage);
+            } catch (Exception ex) {
+                System.out.println("Erro ao mudar de tela: " + ex.getMessage());
+            }
+        });
+
+        fadeOut.play();
     }
 
     public static void main(String[] args) {
