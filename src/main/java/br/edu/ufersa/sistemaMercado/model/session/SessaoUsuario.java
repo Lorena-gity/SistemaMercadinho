@@ -1,6 +1,10 @@
 package br.edu.ufersa.sistemaMercado.model.session;
 import br.edu.ufersa.sistemaMercado.model.entities.Usuario;
 
+/* Implementação de padrão de projeto SINGLETON.
+* Garantindo que exista apenas uma única instância de SessaoUsuario
+* durante toda a execução do sistema */
+
 public class SessaoUsuario {
     private static SessaoUsuario instancia;
     private Usuario usuarioLogado;

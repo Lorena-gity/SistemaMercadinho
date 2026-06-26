@@ -2,10 +2,7 @@ package br.edu.ufersa.sistemaMercado.view;
 
 import br.edu.ufersa.sistemaMercado.controller.VendasController;
 import br.edu.ufersa.sistemaMercado.controller.VendasController.ItemCarrinho;
-import br.edu.ufersa.sistemaMercado.model.entities.Usuario;
-import br.edu.ufersa.sistemaMercado.model.entities.Produto;
-import br.edu.ufersa.sistemaMercado.model.entities.TipoProduto;
-import br.edu.ufersa.sistemaMercado.model.entities.FormaDeVenda;
+import br.edu.ufersa.sistemaMercado.model.entities.*;
 import br.edu.ufersa.sistemaMercado.model.service.TipoProdutoService;
 import br.edu.ufersa.sistemaMercado.model.session.SessaoUsuario;
 import javafx.animation.FadeTransition;
@@ -36,9 +33,7 @@ import javafx.util.Duration;
 import java.util.List;
 
 public class Vendas extends Application {
-
-    // ✅ busca o usuário da sessão global
-    private Usuario usuarioLogado = SessaoUsuario.getInstancia().getUsuarioLogado();
+    private Usuario usuarioLogado = SessaoUsuario.getInstancia().getUsuarioLogado(); // busca o usuário da sessão global
     private VBox listaProdutosRecentes;
     private VBox listaProdutosCarrinho;
     private Label lblQtdValor;
@@ -58,21 +53,14 @@ public class Vendas extends Application {
     }
 
     private boolean isGerente() {
-        if (usuarioLogado == null) return false;
-        return usuarioLogado.getClass().getSimpleName().equalsIgnoreCase("Gerente");
+        return usuarioLogado instanceof Gerente;
     }
 
     @Override
     public void start(Stage primaryStage) {
-        if (usuarioLogado == null) {
-            System.out.println("Aviso: Tela aberta sem usuário logado. Usando perfil temporário de CAIXA.");
-            this.usuarioLogado = new br.edu.ufersa.sistemaMercado.model.entities.Caixa(0, "Caixa", "123");
-        }
-
         BorderPane root = new BorderPane();
         root.setStyle("-fx-background-color: #F4F5F4; -fx-font-family: 'Roboto', sans-serif;");
-
-        // === HEADER ===
+        // HEADER
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(15, 30, 15, 30));
@@ -80,7 +68,6 @@ public class Vendas extends Application {
 
         HBox logoETituloContainer = new HBox(12);
         logoETituloContainer.setAlignment(Pos.CENTER_LEFT);
-
         try {
             Image imgLogoSec = new Image(getClass().getResourceAsStream("/images/SEC_LOGO.png"));
             ImageView viewLogoSec = new ImageView(imgLogoSec);
@@ -131,27 +118,16 @@ public class Vendas extends Application {
         } catch (Exception e) {
             System.out.println("Erro ao carregar imagem: iconSair.png");
         }
-
-        // ✅ encerra a sessão ao sair
-        btnSair.setOnAction(e -> {
-            SessaoUsuario.getInstancia().encerrarSessao();
-            primaryStage.close();
-            try {
-                new Login().start(new Stage());
-            } catch (Exception ex) {
-                System.out.println("Erro ao abrir login: " + ex.getMessage());
-            }
-        });
+        // encerra a sessão ao sair
+        btnSair.setOnAction(e -> controller.logout(primaryStage));
 
         usuarioBox.getChildren().addAll(lblFuncionario, btnSair);
         header.getChildren().addAll(logoETituloContainer, spacerHeader, usuarioBox);
         root.setTop(header);
-
-        // === CONTEÚDO CENTRAL ===
+        // CONTEÚDO CENTRAL
         VBox centroContainer = new VBox(20);
         centroContainer.setPadding(new Insets(20, 30, 20, 30));
-
-        // --- NAVIGATION BAR ---
+        // NAVBAR
         HBox navBar = new HBox(20);
 
         Label tabProdutos = new Label("Produtos");
@@ -176,6 +152,7 @@ public class Vendas extends Application {
                 tabFuncionarios.setGraphic(viewFunc);
             } catch (Exception e) {}
 
+            // COLOCAR NO CONTROLLER
             tabFuncionarios.setOnMouseClicked(e -> {
                 primaryStage.close();
                 try {
@@ -186,8 +163,7 @@ public class Vendas extends Application {
             });
             navBar.getChildren().add(tabFuncionarios);
         }
-
-        // --- AÇÕES ---
+        // AÇÕES
         HBox acoesBar = new HBox(15);
         acoesBar.setAlignment(Pos.CENTER_LEFT);
 
@@ -221,15 +197,13 @@ public class Vendas extends Application {
         btnComprar.setOnAction(e -> abrirModalCompra(primaryStage));
 
         acoesBar.getChildren().addAll(btnFinalizar, btnCancelar, spacerAcoes, btnComprar);
-
-        // --- CARDS PRINCIPAIS ---
+        // CARDS PRINCIPAIS
         HBox cardsContainer = new HBox(25);
         HBox.setHgrow(cardsContainer, Priority.ALWAYS);
 
         DropShadow cardShadow = new DropShadow();
         cardShadow.setRadius(15);
         cardShadow.setColor(Color.web("#000000", 0.04));
-
         // CARD ESQUERDO (Carrinho)
         VBox cardEsquerda = new VBox(20);
         HBox.setHgrow(cardEsquerda, Priority.ALWAYS);
@@ -272,7 +246,6 @@ public class Vendas extends Application {
 
         resumenBox.getChildren().addAll(qtdItensBox, totalBox);
         cardEsquerda.getChildren().addAll(tabelaHeader, listaProdutosCarrinho, resumenBox);
-
         // CARD DIREITO (Busca e Recentes)
         VBox cardDireita = new VBox(20);
         cardDireita.setPrefWidth(350);
@@ -287,7 +260,6 @@ public class Vendas extends Application {
         campoBuscaContainer.setAlignment(Pos.CENTER_LEFT);
         campoBuscaContainer.setPrefHeight(45);
         campoBuscaContainer.setStyle("-fx-background-color: #EFEFEF; -fx-background-radius: 25; -fx-padding: 0 15 0 15;");
-
         try {
             Image imgLupa = new Image(getClass().getResourceAsStream("/images/iconPesquisa.png"));
             ImageView viewLupa = new ImageView(imgLupa);
@@ -295,7 +267,6 @@ public class Vendas extends Application {
             viewLupa.setPreserveRatio(true);
             campoBuscaContainer.getChildren().add(viewLupa);
         } catch (Exception e) {}
-
         this.txtBusca = new TextField();
         this.txtBusca.setPromptText("Inserir código de barras ou nome");
         this.txtBusca.setStyle("-fx-background-color: transparent; -fx-border-width: 0; -fx-padding: 0;");

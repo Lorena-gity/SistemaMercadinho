@@ -19,18 +19,15 @@ public class LoginController {
             mostrarAlertaErro("Aviso", "Por favor, preencha o usuário e a senha.");
             return;
         }
-
         try {
             Usuario usuario = usuarioService.login(nomeUsuario, senha); // Autentica via Service
             SessaoUsuario.getInstancia().setUsuarioLogado(usuario); // Salva na sessão global
             PerfilUsuario perfil = usuario.getPerfil(); // Abre a tela correta
-
             if (perfil == PerfilUsuario.GERENTE) {
                 abrirTelaVendas(stageAtual, usuario);
             } else if (perfil == PerfilUsuario.CAIXA) {
                 abrirTelaVendas(stageAtual, usuario);
             }
-
         } catch (DadosInvalidosException e) {
             mostrarAlertaErro("Falha no Login", e.getMessage());
         } catch (RuntimeException e) {

@@ -8,6 +8,7 @@ import br.edu.ufersa.sistemaMercado.model.entities.*;
 import br.edu.ufersa.sistemaMercado.model.service.NotaCompraService;
 import br.edu.ufersa.sistemaMercado.model.service.ProdutoService;
 import br.edu.ufersa.sistemaMercado.model.service.TipoProdutoService;
+import br.edu.ufersa.sistemaMercado.model.session.SessaoUsuario;
 import br.edu.ufersa.sistemaMercado.view.Login;
 import br.edu.ufersa.sistemaMercado.view.Vendas;
 import javafx.scene.control.Alert;
@@ -153,4 +154,22 @@ public class VendasController {
         alert.setContentText(mensagem);
         alert.showAndWait();
     }
+
+    public void logout(Stage stage){
+        SessaoUsuario.getInstancia().encerrarSessao();
+        try{
+            new Login().start(stage);
+        } catch(Exception e){
+            System.out.println("Erro ao abrir login: " + e.getMessage());
+        }
+    }
+
+    /*tabFuncionarios.setOnMouseClicked(e -> {
+                primaryStage.close();
+                try {
+                    new GerenciarFuncionarios(usuarioLogado).start(new Stage());
+                } catch (Exception ex) {
+                    System.out.println("Erro ao abrir tela de funcionários.");
+                }
+            });*/
 }

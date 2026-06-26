@@ -1,0 +1,61 @@
+.root {
+    -fx-verde-escuro: #033020;
+    -fx-bege-claro: #F5EBE2;
+    -fx-branco: #FAF6F0;
+    -fx-borda-bege: #E2DCD5;
+    -fx-preto: #111111;
+
+    -fx-font-family: "Roboto";
+}
+
+/* TELA */
+.login-root {
+    -fx-background-color: -fx-bege-claro;
+}
+
+/* CARD */
+.login-card {
+    -fx-background-color: -fx-branco;
+    -fx-background-radius: 15;
+    -fx-padding: 40;
+}
+
+/* TÍTULO */
+.title-label {
+    -fx-font-size: 26px;
+    -fx-font-weight: 300;
+    -fx-text-fill: -fx-preto;
+}
+
+/* INPUTS */
+.input-field {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-color: -fx-borda-bege;
+    -fx-border-radius: 5;
+    -fx-padding: 0 12 0 12;
+    -fx-pref-height: 45;
+}
+
+.input-field:focused {
+    -fx-border-color: -fx-verde-escuro;
+    -fx-border-width: 1.5;
+}
+
+/* BOTÃO */
+.login-button {
+    -fx-background-color: -fx-verde-escuro;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-pref-height: 45;
+    -fx-cursor: hand;
+}
+
+.login-button:hover {
+    -fx-opacity: 0.9;
+}
+
+.login-button:pressed {
+    -fx-opacity: 0.8;
+}

@@ -1,6 +1,9 @@
 package br.edu.ufersa.sistemaMercado.model.factory;
-import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
 import br.edu.ufersa.sistemaMercado.model.entities.*;
+
+/* Implementação de padrão de projeto FACTORY METHOD.
+ * Garantindo centralizar a criação de objetos Usuario,
+ * sem expor para o resto do sistema qual classe concreta será instanciada */
 
 public class UsuarioFactory {
     public static Usuario criarUsuario(
