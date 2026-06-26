@@ -31,7 +31,6 @@ public class NotaCompraService {
     public boolean cancelarItem(NotaCompra nota, String codigoBarras) throws DadosInvalidosException, ElementoNaoEncontradoException {
         if (nota == null) throw new DadosInvalidosException("Nota inválida.");
         if (codigoBarras == null || codigoBarras.isEmpty()) throw new DadosInvalidosException("Código inválido.");
-
         Iterator<ItemNota> iterator = nota.getListaItens().iterator();
         while (iterator.hasNext()) {
             ItemNota item = iterator.next();
@@ -52,7 +51,6 @@ public class NotaCompraService {
     public double calcularTotal(NotaCompra nota) throws DadosInvalidosException, OperacaoInvalidaException {
         if (nota == null) throw new DadosInvalidosException("Nota inválida.");
         if (nota.getListaItens().isEmpty()) throw new OperacaoInvalidaException("Nota sem itens.");
-
         double total = 0;
         for (ItemNota item : nota.getListaItens()) {
             total += item.calcularSubTotal();
@@ -60,12 +58,10 @@ public class NotaCompraService {
         nota.setValorTotal(total);
         return total;
     }
-
     // Fecha a venda: confere o estoque de cada item, dá baixa e grava a nota no banco
     public void finalizarVenda(NotaCompra nota) throws DadosInvalidosException, ElementoNaoEncontradoException, OperacaoInvalidaException, EstoqueInsuficienteException {
         if (nota == null) throw new DadosInvalidosException("Nota inválida.");
         if (nota.getListaItens().isEmpty()) throw new OperacaoInvalidaException("Nota sem itens.");
-
         // valida o estoque antes de mexer em qualquer coisa
         for (ItemNota item : nota.getListaItens()) {
             Produto atual = produtoDAO.buscarPorId(item.getProduto().getIdProduto());
@@ -76,16 +72,13 @@ public class NotaCompraService {
                 throw new EstoqueInsuficienteException("Estoque insuficiente para " + atual.getNome());
             }
         }
-
         calcularTotal(nota);
-
         // dá baixa no estoque de cada produto vendido
         for (ItemNota item : nota.getListaItens()) {
             Produto atual = produtoDAO.buscarPorId(item.getProduto().getIdProduto());
             atual.setQuantidadeEstoque(atual.getQuantidadeEstoque() - item.getQuantidade());
             produtoDAO.atualizar(atual);
         }
-
         notaDAO.inserir(nota);
     }
 }

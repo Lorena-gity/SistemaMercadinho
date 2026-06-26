@@ -9,8 +9,11 @@ import br.edu.ufersa.sistemaMercado.model.service.NotaCompraService;
 import br.edu.ufersa.sistemaMercado.model.service.ProdutoService;
 import br.edu.ufersa.sistemaMercado.model.service.TipoProdutoService;
 import br.edu.ufersa.sistemaMercado.model.session.SessaoUsuario;
+import br.edu.ufersa.sistemaMercado.view.GerenciarFuncionarios;
 import br.edu.ufersa.sistemaMercado.view.Login;
 import br.edu.ufersa.sistemaMercado.view.Vendas;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
@@ -41,20 +44,21 @@ public class VendasController {
         }
     }
 
-    public boolean salvarProdutoComprado(String nome, double preco, String categoriaNome, int quantidade) {
+    public boolean salvarProdutoComprado(String nome, double preco, String categoriaNome, String forma, int quantidade) {
         try {
             TipoProduto tipo = tipoProdutoService.listarTipos().stream()
                     .filter(t -> t.getNome().equals(categoriaNome))
                     .findFirst()
-                    .orElseThrow(() -> new DadosInvalidosException("Categoria não encontrada"));
+                    .orElseThrow(() ->
+                            new DadosInvalidosException("Categoria não encontrada"));
 
             Produto novoProduto = new Produto();
             novoProduto.setNome(nome);
             novoProduto.setPreco(preco);
             novoProduto.setQuantidadeEstoque(quantidade);
-            novoProduto.setFormaDeVenda(FormaDeVenda.UNIDADE);
+            novoProduto.setFormaDeVenda(FormaDeVenda.valueOf(forma));
             novoProduto.setTipo(tipo);
-            // codigoBarras não é obrigatório na compra, mas o DAO insere deixa null ou gera um
+
             produtoService.criarProduto(novoProduto);
             return true;
         } catch (DadosInvalidosException | RegistroDuplicadoException e) {
@@ -113,8 +117,7 @@ public class VendasController {
         public double getTotal() { return produto.getPreco() * quantidade; }
     }
 
-    public boolean editarProduto(Produto produto, String novoNome, double novoPreco,
-                                 String categoriaNome, String formaVendaNome) {
+    public boolean editarProduto(Produto produto, String novoNome, double novoPreco, String categoriaNome, String formaVendaNome) {
         try {
             TipoProduto tipo = tipoProdutoService.listarTipos().stream()
                     .filter(t -> t.getNome().equals(categoriaNome))
@@ -139,14 +142,6 @@ public class VendasController {
         }
     }
 
-    private void abrirTelaGerenciarFuncionarios(Stage stageAtual, Usuario usuario) {
-        try {
-            Login.mudarDeTela(stageAtual, new Vendas(usuario));
-        } catch (Exception e) {
-            mostrarAlertaErro("Erro de Inicialização", "Não foi possível carregar a tela.");
-        }
-    }
-
     private void mostrarAlertaErro(String titulo, String mensagem) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titulo);
@@ -164,12 +159,28 @@ public class VendasController {
         }
     }
 
-    /*tabFuncionarios.setOnMouseClicked(e -> {
-                primaryStage.close();
-                try {
-                    new GerenciarFuncionarios(usuarioLogado).start(new Stage());
-                } catch (Exception ex) {
-                    System.out.println("Erro ao abrir tela de funcionários.");
-                }
-            });*/
+    public ObservableList<String> listarCategorias() {
+        ObservableList<String> categorias = FXCollections.observableArrayList();
+        try {
+            TipoProdutoService tipoService = new TipoProdutoService();
+            for (TipoProduto tipo : tipoService.listarTipos()) {
+                categorias.add(tipo.getNome());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return categorias;
+    }
+
+    public ObservableList<String> listarFormasVenda() {
+        ObservableList<String> formas = FXCollections.observableArrayList();
+        for (FormaDeVenda forma : FormaDeVenda.values()) {
+            formas.add(forma.name());
+        }
+        return formas;
+    }
+
+    public void abrirTelaFuncionarios(Stage stage) {
+        Login.mudarDeTela(stage, new GerenciarFuncionarios(SessaoUsuario.getInstancia().getUsuarioLogado()));
+    }
 }

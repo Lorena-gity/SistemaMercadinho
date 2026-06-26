@@ -46,7 +46,7 @@
 .login-button {
     -fx-background-color: -fx-verde-escuro;
     -fx-text-fill: white;
-    -fx-font-weight: bold;
+    -fx-font-weight: semibold;
     -fx-background-radius: 5;
     -fx-pref-height: 45;
     -fx-cursor: hand;
@@ -58,4 +58,142 @@
 
 .login-button:pressed {
     -fx-opacity: 0.8;
+}
+
+.produto-card {
+    -fx-background-color: #EFEFEF;
+    -fx-background-radius: 8;
+    -fx-padding: 12;
+}
+
+.produto-card:hover {
+    -fx-background-color: #E5E5E5;
+}
+
+.produto-nome {
+    -fx-font-weight: bold;
+    -fx-text-fill: #222222;
+}
+
+.produto-info {
+    -fx-text-fill: #555555;
+    -fx-font-size: 12px;
+}
+
+.produto-estoque {
+    -fx-text-fill: #6BB759;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.clicavel {
+    -fx-cursor: hand;
+}
+
+.btn-editar-produto {
+    -fx-background-color: #E2F0DD;
+    -fx-background-radius: 50;
+
+    -fx-min-width: 32;
+    -fx-min-height: 32;
+
+    -fx-max-width: 32;
+    -fx-max-height: 32;
+
+    -fx-cursor: hand;
+}
+
+.linha-carrinho {
+    -fx-padding: 15 0 15 0;
+    -fx-border-color: #F1F1F1;
+    -fx-border-width: 0 0 1 0;
+}
+
+.carrinho-produto-nome {
+    -fx-font-weight: bold;
+    -fx-text-fill: #222222;
+}
+
+.carrinho-produto-categoria {
+    -fx-text-fill: #888888;
+    -fx-font-size: 11px;
+}
+
+.carrinho-preco-unitario {
+    -fx-text-fill: #444444;
+}
+
+.carrinho-total {
+    -fx-text-fill: #222222;
+    -fx-font-weight: bold;
+}
+
+.label-qtd {
+    -fx-background-color: #EFEFEF;
+    -fx-padding: 4 12 4 12;
+    -fx-background-radius: 4;
+    -fx-font-weight: bold;
+}
+
+.btn-qtd {
+    -fx-background-color: transparent;
+    -fx-text-fill: #888888;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.btn-qtd:hover {
+    -fx-text-fill: #033020;
+}
+
+.btn-remover-item {
+    -fx-background-color: #FFEFEA;
+    -fx-background-radius: 50;
+    -fx-min-width: 32;
+    -fx-min-height: 32;
+    -fx-max-width: 32;
+    -fx-max-height: 32;
+    -fx-cursor: hand;
+}
+
+.btn-remover-item:hover {
+    -fx-opacity: 0.85;
+}
+
+.modal-container {
+    -fx-background-color: #EFEFEF;
+    -fx-background-radius: 16;
+    -fx-alignment: top-center;
+}
+
+.modal-titulo {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+}
+
+.modal-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+}
+
+.modal-input {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-padding: 8;
+    -fx-border-width: 0;
+}
+
+.modal-combo {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+}
+
+.btn-fechar-modal {
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 0;
 }

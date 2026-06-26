@@ -39,6 +39,7 @@ public class Login extends Application {
         try {
             Image logoImage = new Image(getClass().getResourceAsStream("/images/LOGO.png"));
             ImageView logo = new ImageView(logoImage);
+            logo.setTranslateY(-45);
             logo.setFitWidth(350);
             logo.setPreserveRatio(true);
 
@@ -97,7 +98,7 @@ public class Login extends Application {
         );
         // Adicionando as duas seções ao layout principal
         root.getChildren().addAll(leftSection, loginCard);
-        // ---- CONFIGURAÇÃO DA JANELA ----
+        // CONFIGURAÇÃO DA JANELA
         Scene scene = new Scene(root, 1000, 650);
         scene.getStylesheets().add(
                 getClass().getResource("/css/style.css").toExternalForm()
@@ -117,7 +118,7 @@ public class Login extends Application {
         try {
             novaTela.start(stage);
         } catch (Exception ex) {
-            System.out.println("Erro ao mudar de tela: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
