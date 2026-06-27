@@ -1,6 +1,6 @@
 package br.edu.ufersa.sistemaMercado.view;
 
-import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
+import br.edu.ufersa.sistemaMercado.controller.GerenciarFuncionariosController;
 import br.edu.ufersa.sistemaMercado.exceptions.RegistroDuplicadoException;
 import br.edu.ufersa.sistemaMercado.model.entities.Gerente;
 import br.edu.ufersa.sistemaMercado.model.entities.PerfilUsuario;
@@ -33,61 +33,48 @@ import javafx.util.Duration;
 import java.util.List;
 
 public class GerenciarFuncionarios extends Application {
-
     // busca o usuário da sessão global
     private Usuario usuarioLogado = SessaoUsuario.getInstancia().getUsuarioLogado();
     private VBox tabelaFuncionarios;
-
-    // usa o Service, não dados mock
-    private final UsuarioService usuarioService = new UsuarioService();
+    private final GerenciarFuncionariosController controller = new GerenciarFuncionariosController();
 
     public GerenciarFuncionarios() {}
-
     public GerenciarFuncionarios(Usuario usuario) {
         this.usuarioLogado = usuario;
     }
 
     @Override
     public void start(Stage primaryStage) {
-        // fallback correto — usa Gerente, não Usuario abstrato
-        if (usuarioLogado == null) {
-            this.usuarioLogado = new Gerente(0, "Gerente Teste", "123");
-        }
-
         BorderPane root = new BorderPane();
         root.setStyle("-fx-background-color: #F4F5F4; -fx-font-family: 'Roboto', sans-serif;");
-
-        // Deixa a tela invisível no começo para o efeito de Fade-in
-        root.setOpacity(0.0);
-
-        // ==========================================
-        // CABEÇALHO
-        // ==========================================
+        // HEADER
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(15, 30, 15, 30));
         header.setStyle("-fx-background-color: #02261A;");
 
-        HBox logoETitulo = new HBox(12);
-        logoETitulo.setAlignment(Pos.CENTER_LEFT);
-
+        HBox logoETituloContainer = new HBox(12);
+        logoETituloContainer.setAlignment(Pos.CENTER_LEFT);
         try {
-            Image imgLogoSec = new Image(getClass().getResourceAsStream("/images/SEC_LOGO.png"));
-            ImageView viewLogoSec = new ImageView(imgLogoSec);
-            viewLogoSec.setFitWidth(35);
-            viewLogoSec.setPreserveRatio(true);
-            logoETitulo.getChildren().add(viewLogoSec);
-        } catch (Exception e) {}
+            ImageView logo = criarIcone("/images/SEC_LOGO.png", 47);
+            if (logo != null) {
+                logo.setTranslateY(-5);
+                logoETituloContainer.getChildren().add(logo);
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao carregar imagem: SEC_LOGO.png");
+        }
 
         VBox titleBox = new VBox(2);
         Label lblTitulo = new Label("Mercadinho do Seu Pedrinho");
-        lblTitulo.setFont(Font.font("Roboto", FontWeight.BOLD, 18));
+        lblTitulo.setFont(Font.font("Roboto", FontWeight.BOLD, 14));
         lblTitulo.setStyle("-fx-text-fill: #FFFFFF;");
+
         Label lblSubtitulo = new Label("Gerencie suas vendas");
-        lblSubtitulo.setFont(Font.font("Roboto", FontWeight.NORMAL, 13));
+        lblSubtitulo.setFont(Font.font("Roboto", FontWeight.NORMAL, 10));
         lblSubtitulo.setStyle("-fx-text-fill: #A3B8B0;");
         titleBox.getChildren().addAll(lblTitulo, lblSubtitulo);
-        logoETitulo.getChildren().add(titleBox);
+        logoETituloContainer.getChildren().add(titleBox);
 
         HBox spacerHeader = new HBox();
         HBox.setHgrow(spacerHeader, Priority.ALWAYS);
@@ -97,72 +84,48 @@ public class GerenciarFuncionarios extends Application {
 
         Label lblFuncionario = new Label(usuarioLogado.getNome() + " (Gerente)");
         lblFuncionario.setStyle("-fx-text-fill: #FFFFFF; -fx-background-color: #033B29; -fx-padding: 8 15 8 15; -fx-background-radius: 20; -fx-font-weight: bold;");
-        // ADICIONADO: Ícone de Usuário
         try {
-            Image imgUser = new Image(getClass().getResourceAsStream("/images/iconUsuario.png"));
-            ImageView viewUser = new ImageView(imgUser);
-            viewUser.setFitWidth(14);
-            viewUser.setPreserveRatio(true);
-            lblFuncionario.setGraphic(viewUser);
-        } catch (Exception e) {}
+            lblFuncionario.setGraphic(criarIcone("/images/iconUsuario.png", 14));
+        } catch (Exception e) {
+            System.out.println("Erro ao carregar imagem: iconUsuario.png");
+        }
 
         Button btnSair = new Button("Sair");
         btnSair.setStyle("-fx-background-color: #FFFFFF; -fx-text-fill: #02261A; -fx-background-radius: 20; -fx-padding: 8 20 8 20; -fx-font-weight: bold; -fx-cursor: hand;");
-        // ADICIONADO: Ícone de Sair
         try {
-            Image imgSair = new Image(getClass().getResourceAsStream("/images/iconSair.png"));
-            ImageView viewSair = new ImageView(imgSair);
-            viewSair.setFitWidth(14);
-            viewSair.setPreserveRatio(true);
-            btnSair.setGraphic(viewSair);
-        } catch (Exception e) {}
-
-        // encerra a sessão ao sair e muda com transição
-        btnSair.setOnAction(e -> {
-            SessaoUsuario.getInstancia().encerrarSessao();
-            mudarDeTela(primaryStage, new Login());
-        });
+            btnSair.setGraphic(criarIcone("/images/iconSair.png", 14));
+        } catch (Exception e) {
+            System.out.println("Erro ao carregar imagem: iconSair.png");
+        }
+        btnSair.setOnAction(e -> controller.logout(primaryStage));
 
         usuarioBox.getChildren().addAll(lblFuncionario, btnSair);
-        header.getChildren().addAll(logoETitulo, spacerHeader, usuarioBox);
+        header.getChildren().addAll(logoETituloContainer, spacerHeader, usuarioBox);
         root.setTop(header);
-
-        // ==========================================
         // CONTEÚDO CENTRAL
-        // ==========================================
         VBox centroContainer = new VBox(20);
         centroContainer.setPadding(new Insets(20, 30, 20, 30));
-
-        // --- NAVIGATION BAR ---
+        // NAVBAR
         HBox navBar = new HBox(20);
         navBar.setStyle("-fx-border-color: #EAEAEA; -fx-border-width: 0 0 1 0; -fx-padding: 0 0 10 0;");
 
         Label tabProdutos = new Label("Produtos");
-        tabProdutos.setStyle("-fx-text-fill: #A0A5A2; -fx-font-weight: bold; -fx-padding: 0 10 5 10; -fx-cursor: hand;");
+        tabProdutos.setStyle("-fx-text-fill: #02261A; -fx-font-weight: bold; -fx-border-color: #02261A; -fx-border-width: 0 0 3 0; -fx-padding: 0 10 5 10;");
         try {
-            Image imgProd = new Image(getClass().getResourceAsStream("/images/iconProduto_OFF.png"));
-            ImageView viewProd = new ImageView(imgProd);
-            viewProd.setFitWidth(16);
-            viewProd.setPreserveRatio(true);
-            tabProdutos.setGraphic(viewProd);
+            tabProdutos.setGraphic(criarIcone("/images/iconProduto_OFF.png", 14));
         } catch (Exception e) {}
-
+        navBar.getChildren().add(tabProdutos);
         // Transição para a tela de Vendas
         tabProdutos.setOnMouseClicked(e -> mudarDeTela(primaryStage, new Vendas(usuarioLogado)));
 
         Label tabFuncionarios = new Label("Funcionários");
         tabFuncionarios.setStyle("-fx-text-fill: #02261A; -fx-font-weight: bold; -fx-border-color: #02261A; -fx-border-width: 0 0 3 0; -fx-padding: 0 10 5 10;");
         try {
-            Image imgFunc = new Image(getClass().getResourceAsStream("/images/iconFuncionario_ON.png"));
-            ImageView viewFunc = new ImageView(imgFunc);
-            viewFunc.setFitWidth(16);
-            viewFunc.setPreserveRatio(true);
-            tabFuncionarios.setGraphic(viewFunc);
+            tabFuncionarios.setGraphic(criarIcone("/images/iconFuncionario.png", 14));
         } catch (Exception e) {}
-
+        tabFuncionarios.setOnMouseClicked(e -> {Login.mudarDeTela(primaryStage, new GerenciarFuncionarios(usuarioLogado));});
         navBar.getChildren().addAll(tabProdutos, tabFuncionarios);
-
-        // --- BARRA DE AÇÕES ---
+        //BARRA DE AÇÕES
         HBox acoesBar = new HBox();
         acoesBar.setAlignment(Pos.CENTER_RIGHT);
 
@@ -170,8 +133,7 @@ public class GerenciarFuncionarios extends Application {
         btnAdicionarFuncionario.setStyle("-fx-background-color: #012417; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 20 10 20; -fx-font-weight: bold; -fx-cursor: hand;");
         btnAdicionarFuncionario.setOnAction(e -> abrirModalAdicionar(primaryStage));
         acoesBar.getChildren().add(btnAdicionarFuncionario);
-
-        // --- TABELA DE FUNCIONÁRIOS ---
+        // TABELA DE FUNCIONÁRIOS
         DropShadow cardShadow = new DropShadow();
         cardShadow.setRadius(15);
         cardShadow.setColor(Color.web("#000000", 0.04));
@@ -192,15 +154,16 @@ public class GerenciarFuncionarios extends Application {
         hCargo.setStyle("-fx-font-weight: bold; -fx-text-fill: #111;");
         hCargo.setPrefWidth(300);
 
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
         Label hAcoes = new Label("Ações");
         hAcoes.setStyle("-fx-font-weight: bold; -fx-text-fill: #111;");
         hAcoes.setPrefWidth(100);
         hAcoes.setAlignment(Pos.CENTER);
 
         headerTabela.getChildren().addAll(hNome, hCargo, hAcoes);
-
         this.tabelaFuncionarios = new VBox();
-
         // carrega do banco de verdade
         carregarFuncionarios(primaryStage);
 
@@ -214,7 +177,6 @@ public class GerenciarFuncionarios extends Application {
         primaryStage.setTitle("Sr. Pedrinho - Gerenciar Funcionários");
         primaryStage.setScene(scene);
         primaryStage.show();
-
         // Animação de entrada (Fade In)
         FadeTransition ftIn = new FadeTransition(Duration.millis(300), root);
         ftIn.setFromValue(0.0);
@@ -222,31 +184,18 @@ public class GerenciarFuncionarios extends Application {
         ftIn.play();
     }
 
-    private void mudarDeTela(Stage stage, Application novaTela) {
-        // Pega a raiz da tela atual
-        javafx.scene.Node rootNode = stage.getScene().getRoot();
-
-        // Cria uma animação de desaparecimento
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(250), rootNode);
-        fadeOut.setFromValue(1.0);
-        fadeOut.setToValue(0.0);
-
-        // Quando a animação terminar, carrega a nova tela NO MESMO STAGE
-        fadeOut.setOnFinished(e -> {
-            try {
-                novaTela.start(stage);
-            } catch (Exception ex) {
-                System.out.println("Erro ao mudar de tela: " + ex.getMessage());
-            }
-        });
-
-        fadeOut.play();
+    public static void mudarDeTela(Stage stage, Application novaTela) {
+        try {
+            novaTela.start(stage);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void carregarFuncionarios(Stage ownerStage) {
         tabelaFuncionarios.getChildren().clear();
         try {
-            List<Usuario> funcionarios = usuarioService.listarUsuarios();
+            List<Usuario> funcionarios = controller.listarFuncionarios();
             for (Usuario u : funcionarios) {
                 tabelaFuncionarios.getChildren().add(criarLinhaFuncionario(u, ownerStage));
             }
@@ -290,7 +239,7 @@ public class GerenciarFuncionarios extends Application {
         btnDeletar.setGraphic(criarIcone("/images/iconLixo.png", 14));
         btnDeletar.setOnAction(e -> {
             try {
-                usuarioService.removerUsuario(func);
+                controller.removerFuncionario(func);
                 carregarFuncionarios(ownerStage); // atualiza a tabela após deletar
             } catch (Exception ex) {
                 mostrarAlerta("Erro", "Não foi possível remover o funcionário: " + ex.getMessage(), Alert.AlertType.ERROR);
@@ -363,7 +312,6 @@ public class GerenciarFuncionarios extends Application {
 
         Button btnSalvar = new Button("Salvar");
         btnSalvar.setStyle("-fx-background-color: #012417; -fx-text-fill: #FFFFFF; -fx-background-radius: 8; -fx-padding: 10 45 10 45; -fx-font-weight: bold; -fx-cursor: hand;");
-
         btnSalvar.setOnAction(e -> {
             String nome = txtNome.getText().trim();
             String senha = txtSenha.getText().trim();
@@ -373,11 +321,10 @@ public class GerenciarFuncionarios extends Application {
                 mostrarAlerta("Campos Incompletos", "Por favor, preencha todos os campos.", Alert.AlertType.ERROR);
                 return;
             }
-
             try {
                 PerfilUsuario perfil = PerfilUsuario.valueOf(cargo);
                 Usuario novoUsuario = UsuarioFactory.criarUsuario(perfil, 0, nome, senha);
-                usuarioService.cadastrarUsuario(novoUsuario);
+                controller.cadastrarFuncionario(novoUsuario);
 
                 mostrarAlerta("Sucesso", "Funcionário cadastrado com sucesso!", Alert.AlertType.INFORMATION);
                 modalStage.close();
@@ -443,7 +390,7 @@ public class GerenciarFuncionarios extends Application {
             }
 
             try {
-                usuarioService.alterarDados(func, novaSenha.isEmpty() ? null : novaSenha, novoNome);
+                controller.editarFuncionario(func, novaSenha.isEmpty() ? null : novaSenha, novoNome);
 
                 mostrarAlerta("Sucesso", "Funcionário atualizado com sucesso!", Alert.AlertType.INFORMATION);
                 modalStage.close();

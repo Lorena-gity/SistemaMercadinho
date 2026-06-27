@@ -71,7 +71,6 @@ public class Vendas extends Application {
         } catch (Exception e) {
             System.out.println("Erro ao carregar imagem: SEC_LOGO.png");
         }
-
         VBox titleBox = new VBox(2);
         Label lblTitulo = new Label("Mercadinho do Seu Pedrinho");
         lblTitulo.setFont(Font.font("Roboto", FontWeight.BOLD, 14));

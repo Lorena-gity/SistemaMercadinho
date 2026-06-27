@@ -11,7 +11,6 @@ import br.edu.ufersa.sistemaMercado.model.service.TipoProdutoService;
 import br.edu.ufersa.sistemaMercado.model.session.SessaoUsuario;
 import br.edu.ufersa.sistemaMercado.view.GerenciarFuncionarios;
 import br.edu.ufersa.sistemaMercado.view.Login;
-import br.edu.ufersa.sistemaMercado.view.Vendas;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
