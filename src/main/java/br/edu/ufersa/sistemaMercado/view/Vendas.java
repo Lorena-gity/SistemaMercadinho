@@ -174,7 +174,7 @@ public class Vendas extends Application {
         cardEsquerda.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-padding: 25;");
         cardEsquerda.setEffect(cardShadow);
 
-        HBox tabelaHeader = new HBox();
+        HBox tabelaHeader = new HBox(20);
         tabelaHeader.setStyle("-fx-padding: 0 0 10 0; -fx-border-color: #EAEAEA; -fx-border-width: 0 0 1 0;");
 
         Label hProduto = new Label("Produto"); hProduto.setStyle("-fx-font-weight: bold; -fx-text-fill: #555;");
@@ -183,7 +183,7 @@ public class Vendas extends Application {
         Label hUnitario = new Label("V. Unitário"); hUnitario.setStyle("-fx-font-weight: bold; -fx-text-fill: #555;");
         hUnitario.setPrefWidth(100);
         Label hQuantidade = new Label("Quantidade"); hQuantidade.setStyle("-fx-font-weight: bold; -fx-text-fill: #555;");
-        hQuantidade.setPrefWidth(110);
+        hQuantidade.setPrefWidth(140);
         hQuantidade.setAlignment(Pos.CENTER);
         Label hTotal = new Label("V. Total"); hTotal.setStyle("-fx-font-weight: bold; -fx-text-fill: #555;");
         hTotal.setPrefWidth(100);
@@ -263,7 +263,7 @@ public class Vendas extends Application {
 
         Scene scene = new Scene(root, 1200, 750);
         scene.getStylesheets().add("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
-
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         primaryStage.setTitle("Sr. Pedrinho - Módulo de Vendas");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -349,7 +349,7 @@ public class Vendas extends Application {
     }
 
     private HBox criarLinhaProdutoCarrinho(String nome, String categoria, String vUnitario, ItemCarrinho item, String vTotal) {
-        HBox linha = new HBox();
+        HBox linha = new HBox(20);
         linha.setAlignment(Pos.CENTER_LEFT);
         linha.getStyleClass().add("linha-carrinho");
 
@@ -369,7 +369,7 @@ public class Vendas extends Application {
         lblUnitario.getStyleClass().add("carrinho-preco-unitario");
 
         HBox seletorQtd = new HBox(10);
-        seletorQtd.setPrefWidth(110);
+        seletorQtd.setPrefWidth(140);
         seletorQtd.setAlignment(Pos.CENTER);
 
         Button btnMenos = new Button("<");
@@ -402,7 +402,7 @@ public class Vendas extends Application {
         acaoBox.setAlignment(Pos.CENTER);
 
         Button btnDeletar = new Button();
-        btnDeletar.getStyleClass().add("btn-remover-item");
+        btnDeletar.getStyleClass().addAll("botao-acao", "botao-acao-vermelho");
         btnDeletar.setOnAction(e -> {carrinho.remove(item);atualizarVisualizacaoCarrinho();});
         try {
             btnDeletar.setGraphic(criarIcone("/images/iconLixo.png", 14));
@@ -437,7 +437,7 @@ public class Vendas extends Application {
 
         if (isGerente()) {
             Button btnEditar = new Button();
-            btnEditar.getStyleClass().add("btn-editar-produto");
+            btnEditar.getStyleClass().addAll("botao-acao", "botao-acao-verde");
             try {
                 btnEditar.setGraphic(criarIcone("/images/iconLapis.png", 14));
             } catch (Exception e) {}

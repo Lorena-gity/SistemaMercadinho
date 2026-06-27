@@ -39,7 +39,7 @@ public class Login extends Application {
         try {
             Image logoImage = new Image(getClass().getResourceAsStream("/images/LOGO.png"));
             ImageView logo = new ImageView(logoImage);
-            logo.setTranslateY(-45);
+            logo.setTranslateY(-35);
             logo.setFitWidth(350);
             logo.setPreserveRatio(true);
 
@@ -64,7 +64,6 @@ public class Login extends Application {
         Label lblWelcome = new Label("Bem-Vindo!");
         lblWelcome.setFont(Font.font("Roboto", FontWeight.LIGHT, 26));
         lblWelcome.getStyleClass().add("title-label");
-
         VBox.setMargin(lblWelcome, new Insets(0, 0, 15, 0));
         // INPUT USUARIO
         TextField txtUsuario = new TextField();

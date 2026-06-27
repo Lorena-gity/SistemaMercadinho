@@ -46,7 +46,7 @@
 .login-button {
     -fx-background-color: -fx-verde-escuro;
     -fx-text-fill: white;
-    -fx-font-weight: semibold;
+    -fx-font-weight: bold;
     -fx-background-radius: 5;
     -fx-pref-height: 45;
     -fx-cursor: hand;
@@ -93,13 +93,10 @@
 .btn-editar-produto {
     -fx-background-color: #E2F0DD;
     -fx-background-radius: 50;
-
     -fx-min-width: 32;
     -fx-min-height: 32;
-
     -fx-max-width: 32;
     -fx-max-height: 32;
-
     -fx-cursor: hand;
 }
 
@@ -120,12 +117,11 @@
 }
 
 .carrinho-preco-unitario {
-    -fx-text-fill: #444444;
+    -fx-text-fill: -fx-preto;
 }
 
 .carrinho-total {
-    -fx-text-fill: #222222;
-    -fx-font-weight: bold;
+    -fx-text-fill: -fx-preto;
 }
 
 .label-qtd {
@@ -196,4 +192,35 @@
     -fx-font-weight: bold;
     -fx-cursor: hand;
     -fx-padding: 0;
+}
+
+.btn-salvar-modal {
+    -fx-background-color: -fx-verde-escuro;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-pref-height: 35;
+    -fx-cursor: hand;
+    -fx-padding: 10 100;
+}
+
+.botao-acao {
+    -fx-background-radius: 50;
+    -fx-min-width: 32;
+    -fx-min-height: 32;
+    -fx-max-width: 32;
+    -fx-max-height: 32;
+    -fx-cursor: hand;
+}
+
+.botao-acao-verde {
+    -fx-background-color: #E2F0DD;
+}
+
+.botao-acao-vermelho {
+    -fx-background-color: #FFEFEA;
+}
+
+.botao-acao-amarelo {
+    -fx-background-color: #FFF4D6;
 }

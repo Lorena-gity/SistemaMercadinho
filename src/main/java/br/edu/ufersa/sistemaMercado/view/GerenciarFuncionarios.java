@@ -210,6 +210,7 @@ public class GerenciarFuncionarios extends Application {
 
         Scene scene = new Scene(root, 1200, 750);
         scene.getStylesheets().add("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         primaryStage.setTitle("Sr. Pedrinho - Gerenciar Funcionários");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -279,10 +280,14 @@ public class GerenciarFuncionarios extends Application {
         acaoBox.setPrefWidth(100);
         acaoBox.setAlignment(Pos.CENTER);
 
-        Button btnEditar = criarBotaoAcao("#E2F0DD", "/images/iconLapis.png");
+        Button btnEditar = new Button();
+        btnEditar.getStyleClass().addAll("botao-acao", "botao-acao-verde");
+        btnEditar.setGraphic(criarIcone("/images/iconLapis.png", 14));
         btnEditar.setOnAction(e -> abrirModalEditar(ownerStage, func));
 
-        Button btnDeletar = criarBotaoAcao("#FFEFEA", "/images/iconLixo.png");
+        Button btnDeletar = new Button();
+        btnDeletar.getStyleClass().addAll("botao-acao", "botao-acao-vermelho");
+        btnDeletar.setGraphic(criarIcone("/images/iconLixo.png", 14));
         btnDeletar.setOnAction(e -> {
             try {
                 usuarioService.removerUsuario(func);
@@ -297,17 +302,17 @@ public class GerenciarFuncionarios extends Application {
         return linha;
     }
 
-    private Button criarBotaoAcao(String corFundo, String caminhoIcone) {
-        Button btn = new Button();
-        btn.setStyle("-fx-background-color: " + corFundo + "; -fx-background-radius: 50; -fx-min-width: 32; -fx-min-height: 32; -fx-max-width: 32; -fx-max-height: 32; -fx-cursor: hand;");
+    private ImageView criarIcone(String caminho, double largura) {
         try {
-            Image img = new Image(getClass().getResourceAsStream(caminhoIcone));
+            Image img = new Image(getClass().getResourceAsStream(caminho));
+
             ImageView view = new ImageView(img);
-            view.setFitWidth(14);
+            view.setFitWidth(largura);
             view.setPreserveRatio(true);
-            btn.setGraphic(view);
-        } catch (Exception e) {}
-        return btn;
+            return view;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void abrirModalAdicionar(Stage ownerStage) {

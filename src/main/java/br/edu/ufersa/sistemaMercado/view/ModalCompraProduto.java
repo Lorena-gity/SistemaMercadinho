@@ -47,6 +47,7 @@ public class ModalCompraProduto {
         // TITULO
         Label lblTitulo = new Label("Compra de Produtos");
         lblTitulo.getStyleClass().add("modal-titulo");
+        VBox.setMargin(lblTitulo, new Insets(0, 0, 20, 0));
         // GRID
         GridPane gridCampos = new GridPane();
         gridCampos.setHgap(20);
@@ -90,7 +91,7 @@ public class ModalCompraProduto {
         boxQuantidade.getChildren().addAll(lblQtd, txtQuantidade);
         // SALVAR
         Button btnSalvar = new Button("Salvar");
-        btnSalvar.getStyleClass().add("btn-principal");
+        btnSalvar.getStyleClass().add("btn-salvar-modal");
         btnSalvar.setOnAction(e -> {
             String nome = txtNome.getText().trim();
             String precoStr = txtPreco.getText().trim();
@@ -127,6 +128,9 @@ public class ModalCompraProduto {
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
         modalStage.setScene(scene);
+        modalStage.setOnShown(e -> {modalStage.setX(ownerStage.getX() + (ownerStage.getWidth() - modalStage.getWidth()) / 2);
+            modalStage.setY(ownerStage.getY() + (ownerStage.getHeight() - modalStage.getHeight()) / 2);
+        });
         modalStage.setOnHidden(e -> rootDaTelaPrincipal.setEffect(null));
         modalStage.showAndWait();
     }

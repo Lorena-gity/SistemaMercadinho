@@ -53,6 +53,7 @@ public class ModalEditarProduto {
         boxFechar.getChildren().add(btnFecharX);
         // TÍTULO
         Label lblTitulo = new Label("Editar Produto");
+        VBox.setMargin(lblTitulo, new Insets(0, 0, 20, 0));
         lblTitulo.getStyleClass().add("modal-titulo");
         // GRID
         GridPane gridCampos = new GridPane();
@@ -98,7 +99,7 @@ public class ModalEditarProduto {
         gridCampos.add(cbForma,1,3);
         // SALVAR
         Button btnSalvar = new Button("Salvar");
-        btnSalvar.getStyleClass().add("btn-principal");
+        btnSalvar.getStyleClass().add("btn-salvar-modal");
         btnSalvar.setOnAction(e -> {
             String nome = txtNome.getText().trim();
             String precoStr = txtPreco.getText().trim();
@@ -132,6 +133,9 @@ public class ModalEditarProduto {
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
         modalStage.setScene(scene);
+        modalStage.setOnShown(e -> {modalStage.setX(ownerStage.getX() + (ownerStage.getWidth() - modalStage.getWidth()) / 2);
+            modalStage.setY(ownerStage.getY() + (ownerStage.getHeight() - modalStage.getHeight()) / 2);
+        });
         modalStage.setOnHidden(e -> rootDaTelaPrincipal.setEffect(null));
         modalStage.showAndWait();
     }
