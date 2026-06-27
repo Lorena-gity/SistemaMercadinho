@@ -73,12 +73,7 @@ public class NotaCompraService {
             }
         }
         calcularTotal(nota);
-        // dá baixa no estoque de cada produto vendido
-        for (ItemNota item : nota.getListaItens()) {
-            Produto atual = produtoDAO.buscarPorId(item.getProduto().getIdProduto());
-            atual.setQuantidadeEstoque(atual.getQuantidadeEstoque() - item.getQuantidade());
-            produtoDAO.atualizar(atual);
-        }
-        notaDAO.inserir(nota);
+        // grava a nota e dá baixa no estoque numa ÚNICA transação (tudo ou nada)
+        notaDAO.registrarVenda(nota);
     }
 }

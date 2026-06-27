@@ -64,6 +64,54 @@ public class NotaCompraDAO implements DAO<NotaCompra> {
         }
     }
 
+    // Venda atômica: grava a nota + os itens E dá baixa no estoque na MESMA transação.
+    // Se qualquer passo falhar, faz rollback de tudo (nada fica pela metade).
+    public void registrarVenda(NotaCompra nota) {
+        String sqlNota = "INSERT INTO nota_compra (data_hora, valor_total) VALUES (?, ?)";
+        String sqlItem = "INSERT INTO item_nota (numero_nota, id_produto, quantidade, preco_unitario) VALUES (?, ?, ?, ?)";
+        String sqlEstoque = "UPDATE produto SET quantidade_estoque = quantidade_estoque - ? WHERE id_produto = ?";
+
+        Connection con = null;
+        try {
+            con = ConexaoBD.getConnection();
+            con.setAutoCommit(false);
+
+            int numeroNota;
+            try (PreparedStatement ps = con.prepareStatement(sqlNota, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setDate(1, Date.valueOf(nota.getDataHora()));
+                ps.setDouble(2, nota.getValorTotal());
+                ps.executeUpdate();
+                ResultSet rs = ps.getGeneratedKeys();
+                rs.next();
+                numeroNota = rs.getInt(1);
+                nota.setNumeroNota(numeroNota);
+            }
+
+            try (PreparedStatement psItem = con.prepareStatement(sqlItem);
+                 PreparedStatement psEstoque = con.prepareStatement(sqlEstoque)) {
+                for (ItemNota item : nota.getListaItens()) {
+                    int idProduto = item.getProduto().getIdProduto();
+                    psItem.setInt(1, numeroNota);
+                    psItem.setInt(2, idProduto);
+                    psItem.setInt(3, item.getQuantidade());
+                    psItem.setDouble(4, item.getPrecoUnitario());
+                    psItem.executeUpdate();
+
+                    psEstoque.setInt(1, item.getQuantidade());
+                    psEstoque.setInt(2, idProduto);
+                    psEstoque.executeUpdate();
+                }
+            }
+
+            con.commit();
+        } catch (SQLException e) {
+            desfazer(con);
+            throw new RuntimeException("Erro ao registrar a venda.", e);
+        } finally {
+            fechar(con);
+        }
+    }
+
     @Override
     public void atualizar(NotaCompra nota) {
         String sql = "UPDATE nota_compra SET data_hora = ?, valor_total = ? WHERE numero_nota = ?";
