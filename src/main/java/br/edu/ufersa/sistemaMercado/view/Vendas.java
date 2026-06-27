@@ -133,6 +133,12 @@ public class Vendas extends Application {
             });
             navBar.getChildren().add(tabFuncionarios);
         }
+
+        // Relatórios: liberado para gerente e funcionário
+        Label tabRelatorios = new Label("Relatórios");
+        tabRelatorios.setStyle("-fx-text-fill: #A0A5A2; -fx-font-weight: bold; -fx-padding: 0 10 5 10; -fx-cursor: hand;");
+        tabRelatorios.setOnMouseClicked(e -> Login.mudarDeTela(primaryStage, new Relatorios(usuarioLogado)));
+        navBar.getChildren().add(tabRelatorios);
         // AÇÕES
         HBox acoesBar = new HBox(15);
         acoesBar.setAlignment(Pos.CENTER_LEFT);
