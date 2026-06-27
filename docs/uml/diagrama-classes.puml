@@ -1,0 +1,217 @@
+@startuml diagrama-classes
+' Diagrama de classes - Mercadinho do Seu Pedrinho
+' Arquitetura em camadas (MVC + Service + DAO) e 4 padrões de projeto:
+' Singleton, Factory Method, Facade e Strategy.
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty members
+
+' ======================= ENTIDADES =======================
+package "model.entities" {
+
+    abstract class Usuario {
+        - idUsuario : int
+        - nome : String
+        - senha : String
+        + autenticar(senha : String) : boolean
+        + setSenhaCriptografada(hash : String) : void
+        + {abstract} getPerfil() : PerfilUsuario
+    }
+    class Gerente extends Usuario {
+        + getPerfil() : PerfilUsuario
+    }
+    class Caixa extends Usuario {
+        + getPerfil() : PerfilUsuario
+    }
+
+    class Produto {
+        - idProduto : int
+        - codigoBarras : String
+        - nome : String
+        - quantidadeEstoque : double
+        - preco : double
+        - formaDeVenda : FormaDeVenda
+    }
+
+    class TipoProduto {
+        - idTipo : int
+        - nome : String
+    }
+
+    class NotaCompra {
+        - numeroNota : int
+        - dataHora : LocalDate
+        - valorTotal : double
+        - listaItens : List<ItemNota>
+    }
+
+    class ItemNota {
+        - quantidade : double
+        - precoUnitario : double
+        + calcularSubTotal() : double
+    }
+
+    enum FormaDeVenda {
+        QUILO
+        UNIDADE
+    }
+    enum PerfilUsuario {
+        GERENTE
+        CAIXA
+    }
+}
+
+Produto "1" --> "1" TipoProduto
+Produto --> FormaDeVenda
+NotaCompra "1" *--> "*" ItemNota
+ItemNota "1" --> "1" Produto
+Usuario --> PerfilUsuario
+
+' ======================= DAO =======================
+package "model.DAO" {
+    interface "DAO<T>" as DAO {
+        + inserir(obj : T) : void
+        + atualizar(obj : T) : void
+        + deletar(id : int) : void
+        + buscarPorId(id : int) : T
+        + listarTodos() : List<T>
+    }
+    class ProdutoDAO
+    class UsuarioDAO
+    class NotaCompraDAO {
+        + registrarVenda(nota : NotaCompra) : void
+    }
+    class TipoProdutoDAO
+}
+
+DAO <|.. ProdutoDAO
+DAO <|.. UsuarioDAO
+DAO <|.. NotaCompraDAO
+DAO <|.. TipoProdutoDAO
+ProdutoDAO ..> Produto
+UsuarioDAO ..> Usuario
+NotaCompraDAO ..> NotaCompra
+TipoProdutoDAO ..> TipoProduto
+
+' ======================= SERVICE =======================
+package "model.service" {
+    class ProdutoService {
+        + criarProduto(p : Produto) : void
+        + removerPorId(id : int) : void
+        + alterarDados(...) : void
+    }
+    class UsuarioService {
+        + login(nome, senha) : Usuario
+        + cadastrarUsuario(u : Usuario) : void
+    }
+    class NotaCompraService {
+        + adicionarItem(nota, produto, qtd : double) : void
+        + finalizarVenda(nota : NotaCompra) : void
+    }
+    class TipoProdutoService
+}
+
+ProdutoService --> ProdutoDAO
+UsuarioService --> UsuarioDAO
+NotaCompraService --> NotaCompraDAO
+NotaCompraService --> ProdutoDAO
+TipoProdutoService --> TipoProdutoDAO
+
+' ======================= PADRÕES =======================
+package "model.session" {
+    class SessaoUsuario <<Singleton>> {
+        - {static} instancia : SessaoUsuario
+        - usuarioLogado : Usuario
+        + {static} getInstancia() : SessaoUsuario
+        + encerrarSessao() : void
+    }
+}
+SessaoUsuario --> Usuario
+
+package "model.factory" {
+    class UsuarioFactory <<Factory>> {
+        + {static} criarUsuario(perfil, id, nome, senha) : Usuario
+    }
+}
+UsuarioFactory ..> Usuario
+UsuarioFactory ..> Gerente
+UsuarioFactory ..> Caixa
+
+package "model.facade" {
+    class CompraFacade <<Facade>> {
+        + adicionarProduto(nota, produto, qtd) : void
+        + finalizarCompra(nota : NotaCompra) : void
+    }
+}
+CompraFacade --> NotaCompraService
+
+package "model.strategy" {
+    interface RelatorioStrategy <<Strategy>> {
+        + titulo() : String
+        + colunas() : String[]
+        + linhas() : List<String[]>
+    }
+    class RelatorioFaturamento
+    class RelatorioMaisVendidos
+    class RelatorioEstoque
+}
+RelatorioStrategy <|.. RelatorioFaturamento
+RelatorioStrategy <|.. RelatorioMaisVendidos
+RelatorioStrategy <|.. RelatorioEstoque
+
+' ======================= CONTROLLER =======================
+package "controller" {
+    class LoginController
+    class VendasController
+    class FuncionariosController
+    class RelatoriosController
+    class TiposController
+}
+
+LoginController --> UsuarioService
+LoginController --> SessaoUsuario
+VendasController --> NotaCompraService
+VendasController --> ProdutoService
+VendasController --> TipoProdutoService
+FuncionariosController --> UsuarioService
+FuncionariosController --> UsuarioFactory
+RelatoriosController --> RelatorioStrategy
+TiposController --> TipoProdutoService
+
+' ======================= VIEW =======================
+package "view" {
+    class Login
+    class Vendas
+    class GerenciarFuncionarios
+    class Relatorios
+    class ModalCompraProduto
+    class ModalEditarProduto
+    class ModalTipos
+}
+
+Login --> LoginController
+Vendas --> VendasController
+GerenciarFuncionarios --> FuncionariosController
+Relatorios --> RelatoriosController
+ModalTipos --> TiposController
+ModalCompraProduto --> VendasController
+ModalEditarProduto --> VendasController
+
+' ======================= UTIL =======================
+package "util" {
+    class ConexaoBD {
+        + {static} getConnection() : Connection
+    }
+    class SenhaUtil {
+        + {static} hash(senha : String) : String
+    }
+}
+UsuarioService ..> SenhaUtil
+Usuario ..> SenhaUtil
+ProdutoDAO ..> ConexaoBD
+UsuarioDAO ..> ConexaoBD
+NotaCompraDAO ..> ConexaoBD
+TipoProdutoDAO ..> ConexaoBD
+
+@enduml
