@@ -13,7 +13,6 @@ import br.edu.ufersa.sistemaMercado.view.GerenciarFuncionarios;
 import br.edu.ufersa.sistemaMercado.view.Login;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -149,14 +148,6 @@ public class VendasController {
             System.out.println("Erro ao excluir produto: " + e.getMessage());
             return false;
         }
-    }
-
-    private void mostrarAlertaErro(String titulo, String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
     }
 
     public void logout(Stage stage){
