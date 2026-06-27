@@ -42,7 +42,7 @@ public class VendasController {
         }
     }
 
-    public boolean salvarProdutoComprado(String nome, double preco, String categoriaNome, String forma, int quantidade) {
+    public boolean salvarProdutoComprado(String nome, double preco, String categoriaNome, String forma, double quantidade) {
         try {
             TipoProduto tipo = tipoProdutoService.listarTipos().stream()
                     .filter(t -> t.getNome().equals(categoriaNome))
@@ -102,16 +102,16 @@ public class VendasController {
 
     public static class ItemCarrinho {
         private final Produto produto;
-        private int quantidade;
+        private double quantidade;
 
-        public ItemCarrinho(Produto produto, int quantidade) {
+        public ItemCarrinho(Produto produto, double quantidade) {
             this.produto = produto;
             this.quantidade = quantidade;
         }
 
         public Produto getProduto() { return produto; }
-        public int getQuantidade() { return quantidade; }
-        public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
+        public double getQuantidade() { return quantidade; }
+        public void setQuantidade(double quantidade) { this.quantidade = quantidade; }
         public double getTotal() { return produto.getPreco() * quantidade; }
     }
 

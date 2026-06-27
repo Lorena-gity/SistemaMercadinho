@@ -3,21 +3,21 @@ package br.edu.ufersa.sistemaMercado.model.entities;
 import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
 
 public class ItemNota {
-    private int quantidade;
+    private double quantidade;
     private double precoUnitario;
     private Produto produto;
 
     // Construtores
     public ItemNota() {}
     
-    public ItemNota(int quantidade, double precoUnitario, Produto produto) {
+    public ItemNota(double quantidade, double precoUnitario, Produto produto) {
 		this.quantidade = quantidade;
 		this.precoUnitario = precoUnitario;
 		this.produto = produto;
 	}
 
     // Getters e Setters
-	public int getQuantidade() {
+	public double getQuantidade() {
 		return quantidade;
 	}
 
@@ -37,7 +37,7 @@ public class ItemNota {
         }
     }
 
-    public void setQuantidade(int quantidade) throws DadosInvalidosException {
+    public void setQuantidade(double quantidade) throws DadosInvalidosException {
         if (quantidade <= 0) {
             throw new DadosInvalidosException("Quantidade inválida");
         } else {

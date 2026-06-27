@@ -73,7 +73,7 @@ public class TesteDAO {
         System.out.println("\n=== 7) Venda ===");
         try {
             Produto arroz = produtoService.pesquisarPorCodigo("7891111111111");
-            int estoqueAntes = arroz.getQuantidadeEstoque();
+            double estoqueAntes = arroz.getQuantidadeEstoque();
 
             NotaCompra nota = new NotaCompra();
             vendaService.adicionarItem(nota, arroz, 2);  

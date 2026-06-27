@@ -6,7 +6,7 @@ public class Produto {
     private int idProduto;
     private String codigoBarras;
     private String nome;
-    private int quantidadeEstoque;
+    private double quantidadeEstoque;
     private double preco;
     private TipoProduto tipo;
     private FormaDeVenda formaDeVenda;
@@ -14,7 +14,7 @@ public class Produto {
     // Construtores
     public Produto() {}
 
-    public Produto(int idProduto, String codigoBarras, String nome, int quantidadeEstoque, double preco, TipoProduto tipo, FormaDeVenda formaDeVenda) {
+    public Produto(int idProduto, String codigoBarras, String nome, double quantidadeEstoque, double preco, TipoProduto tipo, FormaDeVenda formaDeVenda) {
 		this.idProduto = idProduto;
 		this.codigoBarras = codigoBarras;
 		this.nome = nome;
@@ -45,7 +45,7 @@ public class Produto {
         return preco;
     }
 
-    public int getQuantidadeEstoque() {
+    public double getQuantidadeEstoque() {
         return quantidadeEstoque;
     }
 
@@ -80,7 +80,7 @@ public class Produto {
         }
     }
 
-    public void setQuantidadeEstoque(int quantidadeEstoque) throws DadosInvalidosException {
+    public void setQuantidadeEstoque(double quantidadeEstoque) throws DadosInvalidosException {
         if (quantidadeEstoque < 0) {
             throw new DadosInvalidosException("Quantidade inválida");
         } else {

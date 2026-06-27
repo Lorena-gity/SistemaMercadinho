@@ -49,7 +49,7 @@ public class NotaCompraDAO implements DAO<NotaCompra> {
                 for (ItemNota item : nota.getListaItens()) {
                     ps.setInt(1, numeroNota);
                     ps.setInt(2, item.getProduto().getIdProduto());
-                    ps.setInt(3, item.getQuantidade());
+                    ps.setDouble(3, item.getQuantidade());
                     ps.setDouble(4, item.getPrecoUnitario());
                     ps.executeUpdate();
                 }
@@ -93,11 +93,11 @@ public class NotaCompraDAO implements DAO<NotaCompra> {
                     int idProduto = item.getProduto().getIdProduto();
                     psItem.setInt(1, numeroNota);
                     psItem.setInt(2, idProduto);
-                    psItem.setInt(3, item.getQuantidade());
+                    psItem.setDouble(3, item.getQuantidade());
                     psItem.setDouble(4, item.getPrecoUnitario());
                     psItem.executeUpdate();
 
-                    psEstoque.setInt(1, item.getQuantidade());
+                    psEstoque.setDouble(1, item.getQuantidade());
                     psEstoque.setInt(2, idProduto);
                     psEstoque.executeUpdate();
                 }
@@ -204,7 +204,7 @@ public class NotaCompraDAO implements DAO<NotaCompra> {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Produto produto = produtoDAO.buscarPorId(rs.getInt("id_produto"));
-                int quantidade = rs.getInt("quantidade");
+                double quantidade = rs.getDouble("quantidade");
                 double precoUnitario = rs.getDouble("preco_unitario");
                 itens.add(new ItemNota(quantidade, precoUnitario, produto));
             }

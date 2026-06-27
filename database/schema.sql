@@ -19,7 +19,7 @@ CREATE TABLE produto (
     id_produto         INT AUTO_INCREMENT PRIMARY KEY,
     codigo_barras      VARCHAR(13) NULL UNIQUE,
     nome               VARCHAR(150) NOT NULL,
-    quantidade_estoque INT NOT NULL DEFAULT 0,
+    quantidade_estoque DECIMAL(10,3) NOT NULL DEFAULT 0,
     preco              DECIMAL(10,2) NOT NULL,
     forma_venda        ENUM('QUILO','UNIDADE') NOT NULL,
     id_tipo            INT,
@@ -43,7 +43,7 @@ CREATE TABLE item_nota (
     id_item        INT AUTO_INCREMENT PRIMARY KEY,
     numero_nota    INT NOT NULL,
     id_produto     INT NOT NULL,
-    quantidade     INT NOT NULL,
+    quantidade     DECIMAL(10,3) NOT NULL,
     preco_unitario DECIMAL(10,2) NOT NULL,
     CONSTRAINT fk_item_nota    FOREIGN KEY (numero_nota) REFERENCES nota_compra(numero_nota),
     CONSTRAINT fk_item_produto FOREIGN KEY (id_produto)  REFERENCES produto(id_produto)

@@ -1,6 +1,7 @@
 package br.edu.ufersa.sistemaMercado.model.strategy;
 
 import br.edu.ufersa.sistemaMercado.model.DAO.ProdutoDAO;
+import br.edu.ufersa.sistemaMercado.model.entities.FormaDeVenda;
 import br.edu.ufersa.sistemaMercado.model.entities.Produto;
 
 import java.util.ArrayList;
@@ -25,13 +26,17 @@ public class RelatorioEstoque implements RelatorioStrategy {
     @Override
     public List<String[]> linhas() {
         List<Produto> produtos = new ArrayList<>(produtoDAO.listarTodos());
-        produtos.sort(Comparator.comparingInt(Produto::getQuantidadeEstoque));
+        produtos.sort(Comparator.comparingDouble(Produto::getQuantidadeEstoque));
 
         List<String[]> linhas = new ArrayList<>();
         for (Produto p : produtos) {
+            boolean porPeso = p.getFormaDeVenda() == FormaDeVenda.QUILO;
+            String estoque = porPeso
+                    ? String.format("%.3f kg", p.getQuantidadeEstoque())
+                    : (int) p.getQuantidadeEstoque() + " un";
             linhas.add(new String[]{
                     p.getNome(),
-                    String.valueOf(p.getQuantidadeEstoque()),
+                    estoque,
                     "R$ " + String.format("%.2f", p.getPreco())
             });
         }

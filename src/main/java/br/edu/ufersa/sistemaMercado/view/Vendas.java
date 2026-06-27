@@ -296,23 +296,68 @@ public class Vendas extends Application {
     }
 
     private void adicionarProdutoAoCarrinho(Produto produto) {
+        boolean porPeso = produto.getFormaDeVenda() == FormaDeVenda.QUILO;
         for (ItemCarrinho item : carrinho) {
             if (item.getProduto().getIdProduto() == produto.getIdProduto())  {
-                item.setQuantidade(item.getQuantidade() + 1);
+                if (porPeso) {
+                    Double peso = solicitarPeso(produto);
+                    if (peso == null) return;
+                    item.setQuantidade(peso);
+                } else {
+                    item.setQuantidade(item.getQuantidade() + 1);
+                }
                 atualizarVisualizacaoCarrinho();
                 return;
             }
         }
-        carrinho.add(new ItemCarrinho(produto, 1));
+        if (porPeso) {
+            Double peso = solicitarPeso(produto);
+            if (peso == null) return;
+            carrinho.add(new ItemCarrinho(produto, peso));
+        } else {
+            carrinho.add(new ItemCarrinho(produto, 1));
+        }
+    }
+
+    // Pede o peso (kg) para produtos vendidos por quilo. Retorna null se cancelar.
+    private Double solicitarPeso(Produto produto) {
+        while (true) {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Peso");
+            dialog.setHeaderText(produto.getNome() + " — " + formatarMoeda(produto.getPreco()) + " / kg");
+            dialog.setContentText("Peso (kg):");
+
+            Optional<String> resposta = dialog.showAndWait();
+            if (!resposta.isPresent()) {
+                return null;
+            }
+            try {
+                double peso = Double.parseDouble(resposta.get().trim().replace(",", "."));
+                if (peso <= 0) {
+                    mostrarAlerta("Peso inválido", "Informe um peso maior que zero.", Alert.AlertType.WARNING);
+                    continue;
+                }
+                return peso;
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("Peso inválido", "Digite um valor numérico válido.", Alert.AlertType.WARNING);
+            }
+        }
     }
 
     private String formatarMoeda(double valor) {
         return "R$ " + String.format("%.2f", valor);
     }
 
+    // Mostra a quantidade conforme a forma de venda: kg (3 casas) ou unidades inteiras.
+    private String formatarQuantidade(ItemCarrinho item) {
+        if (item.getProduto().getFormaDeVenda() == FormaDeVenda.QUILO) {
+            return String.format("%.3f kg", item.getQuantidade());
+        }
+        return String.valueOf((int) item.getQuantidade());
+    }
+
     private void atualizarVisualizacaoCarrinho() {
         listaProdutosCarrinho.getChildren().clear();
-        int qtdTotalItens = 0;
         double valorTotalVenda = 0.0;
 
         for (ItemCarrinho item : carrinho) {
@@ -322,10 +367,10 @@ public class Vendas extends Application {
             HBox linha = criarLinhaProdutoCarrinho(produto.getNome(), categoria, formatarMoeda(produto.getPreco()), item, formatarMoeda(item.getTotal()));
             listaProdutosCarrinho.getChildren().add(linha);
 
-            qtdTotalItens += item.getQuantidade();
             valorTotalVenda += item.getTotal();
         }
-        lblQtdValor.setText(String.valueOf(qtdTotalItens));
+        // produtos por peso e por unidade não somam na mesma grandeza: mostra a qtd de itens no carrinho
+        lblQtdValor.setText(String.valueOf(carrinho.size()));
         lblTotalValor.setText(formatarMoeda(valorTotalVenda));
     }
 
@@ -430,26 +475,39 @@ public class Vendas extends Application {
         seletorQtd.setPrefWidth(140);
         seletorQtd.setAlignment(Pos.CENTER);
 
-        Button btnMenos = new Button("<");
-        btnMenos.getStyleClass().add("btn-qtd");
-
-        btnMenos.setOnAction(e -> {
-            if (item.getQuantidade() > 1) {
-                item.setQuantidade(item.getQuantidade() - 1);
-                atualizarVisualizacaoCarrinho();
-            }
-        });
-        Label lblQtd = new Label(String.valueOf(item.getQuantidade()));
+        Label lblQtd = new Label(formatarQuantidade(item));
         lblQtd.getStyleClass().add("label-qtd");
 
-        Button btnMais = new Button(">");
-        btnMais.getStyleClass().add("btn-qtd");
+        if (item.getProduto().getFormaDeVenda() == FormaDeVenda.QUILO) {
+            // produto por peso: não faz sentido +/- de 1; abre o diálogo para corrigir o peso
+            Button btnPeso = new Button("Alterar peso");
+            btnPeso.getStyleClass().add("btn-qtd");
+            btnPeso.setOnAction(e -> {
+                Double peso = solicitarPeso(item.getProduto());
+                if (peso != null) {
+                    item.setQuantidade(peso);
+                    atualizarVisualizacaoCarrinho();
+                }
+            });
+            seletorQtd.getChildren().addAll(lblQtd, btnPeso);
+        } else {
+            Button btnMenos = new Button("<");
+            btnMenos.getStyleClass().add("btn-qtd");
+            btnMenos.setOnAction(e -> {
+                if (item.getQuantidade() > 1) {
+                    item.setQuantidade(item.getQuantidade() - 1);
+                    atualizarVisualizacaoCarrinho();
+                }
+            });
 
-        btnMais.setOnAction(e -> {
-            item.setQuantidade(item.getQuantidade() + 1);
-            atualizarVisualizacaoCarrinho();
-        });
-        seletorQtd.getChildren().addAll(btnMenos, lblQtd, btnMais);
+            Button btnMais = new Button(">");
+            btnMais.getStyleClass().add("btn-qtd");
+            btnMais.setOnAction(e -> {
+                item.setQuantidade(item.getQuantidade() + 1);
+                atualizarVisualizacaoCarrinho();
+            });
+            seletorQtd.getChildren().addAll(btnMenos, lblQtd, btnMais);
+        }
 
         Label lblTotal = new Label(vTotal);
         lblTotal.setPrefWidth(100);
@@ -473,7 +531,11 @@ public class Vendas extends Application {
     private HBox criarCardProdutoRecente(Produto prod) {
         String nomeCategoria = (prod.getTipo() != null) ? prod.getTipo().getNome() : "Geral";
         String infoPreco = nomeCategoria + " - R$ " + String.format("%.2f", prod.getPreco());
-        String estoqueText = "Estoque atual: " + prod.getQuantidadeEstoque() + " un";
+        boolean porPeso = prod.getFormaDeVenda() == FormaDeVenda.QUILO;
+        String estoqueFmt = porPeso
+                ? String.format("%.3f", prod.getQuantidadeEstoque())
+                : String.valueOf((int) prod.getQuantidadeEstoque());
+        String estoqueText = "Estoque atual: " + estoqueFmt + (porPeso ? " kg" : " un");
 
         HBox card = new HBox();
         card.setAlignment(Pos.CENTER_LEFT);

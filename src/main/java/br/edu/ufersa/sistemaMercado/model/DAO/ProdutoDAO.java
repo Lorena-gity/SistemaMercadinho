@@ -25,7 +25,7 @@ public class ProdutoDAO implements DAO<Produto> {
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, produto.getCodigoBarras());
             ps.setString(2, produto.getNome());
-            ps.setInt(3, produto.getQuantidadeEstoque());
+            ps.setDouble(3, produto.getQuantidadeEstoque());
             ps.setDouble(4, produto.getPreco());
             ps.setString(5, produto.getFormaDeVenda().name());
             ps.setInt(6, produto.getTipo().getIdTipo());
@@ -48,7 +48,7 @@ public class ProdutoDAO implements DAO<Produto> {
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, produto.getCodigoBarras());
             ps.setString(2, produto.getNome());
-            ps.setInt(3, produto.getQuantidadeEstoque());
+            ps.setDouble(3, produto.getQuantidadeEstoque());
             ps.setDouble(4, produto.getPreco());
             ps.setString(5, produto.getFormaDeVenda().name());
             ps.setInt(6, produto.getTipo().getIdTipo());
@@ -140,7 +140,7 @@ public class ProdutoDAO implements DAO<Produto> {
         int id = rs.getInt("id_produto");
         String codigo = rs.getString("codigo_barras");
         String nome = rs.getString("nome");
-        int estoque = rs.getInt("quantidade_estoque");
+        double estoque = rs.getDouble("quantidade_estoque");
         double preco = rs.getDouble("preco");
         FormaDeVenda forma = FormaDeVenda.valueOf(rs.getString("forma_venda"));
         TipoProduto tipo = tipoDAO.buscarPorId(rs.getInt("id_tipo"));

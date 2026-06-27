@@ -16,7 +16,7 @@ public class NotaCompraService {
     private final ProdutoDAO produtoDAO = new ProdutoDAO();
     private final NotaCompraDAO notaDAO = new NotaCompraDAO();
 
-    public void adicionarItem(NotaCompra nota, Produto produto, int quantidade) throws DadosInvalidosException {
+    public void adicionarItem(NotaCompra nota, Produto produto, double quantidade) throws DadosInvalidosException {
         if (nota == null) throw new DadosInvalidosException("Nota inválida.");
         if (produto == null) throw new DadosInvalidosException("Produto inválido.");
         if (quantidade <= 0) throw new DadosInvalidosException("Quantidade inválida.");

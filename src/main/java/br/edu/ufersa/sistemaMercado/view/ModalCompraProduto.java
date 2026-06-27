@@ -104,7 +104,7 @@ public class ModalCompraProduto {
             }
             try {
                 double preco = Double.parseDouble(precoStr.replace(",", "."));
-                int quantidade = Integer.parseInt(qtdStr);
+                double quantidade = Double.parseDouble(qtdStr.replace(",", "."));
                 boolean sucesso = controller.salvarProdutoComprado(nome, preco, categoria, tipo, quantidade);
 
                 if (sucesso) {
