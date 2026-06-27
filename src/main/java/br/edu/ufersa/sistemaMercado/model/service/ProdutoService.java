@@ -36,6 +36,11 @@ public class ProdutoService {
         throw new ElementoNaoEncontradoException("Produto não encontrado.");
     }
 
+    // Remove direto pelo id (evita ambiguidade quando há produtos de mesmo nome)
+    public void removerPorId(int id) {
+        produtoDAO.deletar(id);
+    }
+
     public void alterarDados(Produto produto, String novoNome, double novoPreco) throws DadosInvalidosException, ElementoNaoEncontradoException {
         if (produto == null) {
             throw new ElementoNaoEncontradoException("Produto não encontrado.");

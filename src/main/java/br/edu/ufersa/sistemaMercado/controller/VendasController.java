@@ -142,9 +142,10 @@ public class VendasController {
 
     public boolean excluirProduto(Produto produto) {
         try {
-            produtoService.removerProduto(produto.getNome());
+            produtoService.removerPorId(produto.getIdProduto());
             return true;
         } catch (Exception e) {
+            // normalmente cai aqui quando o produto já tem vendas registradas (chave estrangeira)
             System.out.println("Erro ao excluir produto: " + e.getMessage());
             return false;
         }

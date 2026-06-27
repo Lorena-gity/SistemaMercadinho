@@ -481,7 +481,8 @@ public class Vendas extends Application {
             if (controller.excluirProduto(prod)) {
                 atualizarPainelLateral();
             } else {
-                mostrarAlerta("Erro", "Não foi possível excluir o produto.", Alert.AlertType.ERROR);
+                mostrarAlerta("Erro", "Não foi possível excluir o produto. "
+                        + "Ele pode já ter vendas registradas no histórico.", Alert.AlertType.ERROR);
             }
         }
     }
