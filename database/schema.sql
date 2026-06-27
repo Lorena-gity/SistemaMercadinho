@@ -69,8 +69,9 @@ END$$
 
 DELIMITER ;
 
+-- Senhas gravadas em hash SHA-256. O valor abaixo corresponde a '1234'.
 INSERT INTO usuario (nome, senha, perfil) VALUES
-    ('admin', '1234', 'GERENTE'),
-    ('caixa1', '1234', 'CAIXA');
+    ('admin', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'GERENTE'),
+    ('caixa1', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'CAIXA');
 
 INSERT INTO tipo_produto (nome) VALUES ('Alimentos'), ('Bebidas');

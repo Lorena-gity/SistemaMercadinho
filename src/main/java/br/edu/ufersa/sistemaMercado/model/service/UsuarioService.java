@@ -5,6 +5,7 @@ import br.edu.ufersa.sistemaMercado.exceptions.ElementoNaoEncontradoException;
 import br.edu.ufersa.sistemaMercado.exceptions.RegistroDuplicadoException;
 import br.edu.ufersa.sistemaMercado.model.DAO.UsuarioDAO;
 import br.edu.ufersa.sistemaMercado.model.entities.Usuario;
+import br.edu.ufersa.sistemaMercado.util.SenhaUtil;
 
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class UsuarioService {
         if (usuarioDAO.buscarPorNome(usuario.getNome()) != null) {
             throw new RegistroDuplicadoException("Usuário já cadastrado");
         }
+        // criptografa a senha antes de gravar (nunca guardar em texto puro)
+        usuario.setSenhaCriptografada(SenhaUtil.hash(usuario.getSenha()));
         usuarioDAO.inserir(usuario);
     }
 
@@ -41,7 +44,7 @@ public class UsuarioService {
             usuario.setNome(novoNome);
         }
         if (novaSenha != null && !novaSenha.isEmpty()) {
-            usuario.setSenha(novaSenha);
+            usuario.setSenhaCriptografada(SenhaUtil.hash(novaSenha));
         }
         usuarioDAO.atualizar(usuario);
     }

@@ -2,6 +2,7 @@ package br.edu.ufersa.sistemaMercado.model.entities;
 
 import br.edu.ufersa.sistemaMercado.exceptions.DadosInvalidosException;
 import br.edu.ufersa.sistemaMercado.exceptions.RegistroDuplicadoException;
+import br.edu.ufersa.sistemaMercado.util.SenhaUtil;
 
 public abstract class Usuario {
     private int idUsuario;
@@ -37,7 +38,12 @@ public abstract class Usuario {
     public abstract PerfilUsuario getPerfil();
 
     public boolean autenticar(String senhaDigitada) {
-        return this.senha != null && this.senha.equals(senhaDigitada);
+        return this.senha != null && this.senha.equals(SenhaUtil.hash(senhaDigitada));
+    }
+
+    // Guarda a senha já no formato de hash (sem revalidar), usado pela camada de serviço
+    public void setSenhaCriptografada(String senhaHash) {
+        this.senha = senhaHash;
     }
 
     public void setNome(String novoNome) throws DadosInvalidosException, RegistroDuplicadoException { // para alterar o nome atual do usuário é necessário que o novo nome seja preenchido e que não seja igual ao anterior
