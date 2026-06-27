@@ -98,7 +98,7 @@ public class Login extends Application {
         // Adicionando as duas seções ao layout principal
         root.getChildren().addAll(leftSection, loginCard);
         // CONFIGURAÇÃO DA JANELA
-        Scene scene = new Scene(root, 1000, 650);
+        Scene scene = new Scene(root, 1200, 750);
         scene.getStylesheets().add(
                 getClass().getResource("/css/style.css").toExternalForm()
         );
