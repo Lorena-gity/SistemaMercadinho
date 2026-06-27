@@ -1,0 +1,20 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mercadinho-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootsenha
+      MYSQL_DATABASE: mercadinho      # banco criado automaticamente
+      MYSQL_USER: mercado             # mesmo usuário do ConexaoBD
+      MYSQL_PASSWORD: senhapoo        # mesma senha do ConexaoBD
+    ports:
+      - "3309:3306"   # acessa em localhost:3309 (evita conflito com MySQL local na 3306)
+    volumes:
+      # roda o schema.sql (com o trigger) só na primeira vez que o container sobe
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - mercadinho_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+  mercadinho_data:

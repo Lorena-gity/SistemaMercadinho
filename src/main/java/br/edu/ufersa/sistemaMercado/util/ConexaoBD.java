@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class ConexaoBD {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/mercadinho?useSSL=false&serverTimezone=UTC";
-    private static final String USUARIO = "root"; // use root ou usuário específico
-    private static final String SENHA = "Kuroshitsuji190!"; // troque pela sua senha do MySQL
+    private static final String URL = "jdbc:mysql://localhost:3309/mercadinho?useSSL=false&serverTimezone=UTC";
+    private static final String USUARIO = "mercado"; // use root ou usuário específico
+    private static final String SENHA = "senhapoo"; // troque pela sua senha do MySQL
 
     private ConexaoBD() {}
 
