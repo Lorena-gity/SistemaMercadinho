@@ -103,6 +103,7 @@ public class Login extends Application {
                 getClass().getResource("/css/style.css").toExternalForm()
         );
         primaryStage.setTitle("Sr. Pedrinho - Login");
+        aplicarIcone(primaryStage);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
@@ -116,8 +117,18 @@ public class Login extends Application {
     public static void mudarDeTela(Stage stage, Application novaTela) {
         try {
             novaTela.start(stage);
+            aplicarIcone(stage);
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    // Usa a LOGO.png do mercadinho como ícone da janela, no lugar do ícone padrão do JavaFX.
+    public static void aplicarIcone(Stage stage) {
+        try {
+            stage.getIcons().setAll(new Image(Login.class.getResourceAsStream("/images/LOGO.png")));
+        } catch (Exception e) {
+            System.out.println("Erro ao carregar a logo da aplicação.");
         }
     }
 

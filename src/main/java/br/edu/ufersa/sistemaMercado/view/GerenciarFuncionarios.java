@@ -410,6 +410,7 @@ public class GerenciarFuncionarios extends Application {
 
     private Stage prepararModal(Stage ownerStage) {
         Stage modalStage = new Stage();
+        Login.aplicarIcone(modalStage);
         modalStage.initModality(Modality.WINDOW_MODAL);
         modalStage.initOwner(ownerStage);
         modalStage.initStyle(StageStyle.TRANSPARENT);

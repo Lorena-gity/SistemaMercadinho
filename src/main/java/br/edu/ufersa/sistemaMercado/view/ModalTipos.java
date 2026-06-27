@@ -26,6 +26,7 @@ public class ModalTipos {
 
     public void abrir(Stage owner, Runnable aoFechar) {
         Stage modal = new Stage();
+        Login.aplicarIcone(modal);
         modal.initOwner(owner);
         modal.initModality(Modality.APPLICATION_MODAL);
         modal.setTitle("Gerenciar Categorias");

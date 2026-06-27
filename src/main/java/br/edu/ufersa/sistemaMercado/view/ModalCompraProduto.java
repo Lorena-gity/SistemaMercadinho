@@ -21,6 +21,7 @@ public class ModalCompraProduto {
 
     public void abrir(Stage ownerStage, Runnable onSuccess) {
         Stage modalStage = new Stage();
+        Login.aplicarIcone(modalStage);
 
         modalStage.initModality(Modality.WINDOW_MODAL);
         modalStage.initOwner(ownerStage);
