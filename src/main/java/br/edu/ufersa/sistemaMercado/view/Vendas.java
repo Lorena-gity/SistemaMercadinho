@@ -441,11 +441,36 @@ public class Vendas extends Application {
                 btnEditar.setGraphic(criarIcone("/images/iconLapis.png", 14));
             } catch (Exception e) {}
             btnEditar.setOnAction(e -> new ModalEditarProduto(controller, prod).abrir((Stage) card.getScene().getWindow(), this::atualizarPainelLateral));
-            card.getChildren().addAll(infoBox, btnEditar);
+
+            Button btnExcluir = new Button();
+            btnExcluir.getStyleClass().addAll("botao-acao", "botao-acao-vermelho");
+            try {
+                btnExcluir.setGraphic(criarIcone("/images/iconLixo.png", 14));
+            } catch (Exception e) {}
+            btnExcluir.setOnAction(e -> excluirProduto(prod));
+
+            HBox acoesCard = new HBox(8, btnEditar, btnExcluir);
+            acoesCard.setAlignment(Pos.CENTER);
+            card.getChildren().addAll(infoBox, acoesCard);
         } else {
             card.getChildren().add(infoBox);
         }
         return card;
+    }
+
+    private void excluirProduto(Produto prod) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Excluir o produto \"" + prod.getNome() + "\"?", ButtonType.YES, ButtonType.NO);
+        confirm.setHeaderText(null);
+        confirm.setTitle("Confirmar exclusão");
+        confirm.showAndWait();
+        if (confirm.getResult() == ButtonType.YES) {
+            if (controller.excluirProduto(prod)) {
+                atualizarPainelLateral();
+            } else {
+                mostrarAlerta("Erro", "Não foi possível excluir o produto.", Alert.AlertType.ERROR);
+            }
+        }
     }
 
     private ImageView criarIcone(String caminho, double largura) {

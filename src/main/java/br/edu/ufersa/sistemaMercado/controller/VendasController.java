@@ -141,6 +141,16 @@ public class VendasController {
         }
     }
 
+    public boolean excluirProduto(Produto produto) {
+        try {
+            produtoService.removerProduto(produto.getNome());
+            return true;
+        } catch (Exception e) {
+            System.out.println("Erro ao excluir produto: " + e.getMessage());
+            return false;
+        }
+    }
+
     private void mostrarAlertaErro(String titulo, String mensagem) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titulo);
