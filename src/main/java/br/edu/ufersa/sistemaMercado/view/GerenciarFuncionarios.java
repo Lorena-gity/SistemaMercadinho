@@ -107,31 +107,41 @@ public class GerenciarFuncionarios extends Application {
         centroContainer.setPadding(new Insets(20, 30, 20, 30));
         // NAVBAR
         HBox navBar = new HBox(20);
-        navBar.setStyle("-fx-border-color: #EAEAEA; -fx-border-width: 0 0 1 0; -fx-padding: 0 0 10 0;");
 
         Label tabProdutos = new Label("Produtos");
-        tabProdutos.setStyle("-fx-text-fill: #02261A; -fx-font-weight: bold; -fx-border-color: #02261A; -fx-border-width: 0 0 3 0; -fx-padding: 0 10 5 10;");
+        tabProdutos.setStyle("-fx-text-fill: #A0A5A2;" + "-fx-font-weight: bold;" + "-fx-padding: 0 10 5 10;" + "-fx-cursor: hand;");
         try {
             tabProdutos.setGraphic(criarIcone("/images/iconProduto_OFF.png", 14));
         } catch (Exception e) {}
         navBar.getChildren().add(tabProdutos);
-        // Transição para a tela de Vendas
-        tabProdutos.setOnMouseClicked(e -> mudarDeTela(primaryStage, new Vendas(usuarioLogado)));
+        tabProdutos.setOnMouseClicked(e -> Login.mudarDeTela(primaryStage, new Vendas(usuarioLogado)));
 
         Label tabFuncionarios = new Label("Funcionários");
-        tabFuncionarios.setStyle("-fx-text-fill: #02261A; -fx-font-weight: bold; -fx-border-color: #02261A; -fx-border-width: 0 0 3 0; -fx-padding: 0 10 5 10;");
+        tabFuncionarios.setStyle("-fx-text-fill: #02261A;" + "-fx-font-weight: bold;" + "-fx-border-color: #02261A;" + "-fx-border-width: 0 0 3 0;" + "-fx-padding: 0 10 5 10;");
         try {
             tabFuncionarios.setGraphic(criarIcone("/images/iconFuncionario.png", 14));
         } catch (Exception e) {}
+        navBar.getChildren().add(tabFuncionarios);
         tabFuncionarios.setOnMouseClicked(e -> {Login.mudarDeTela(primaryStage, new GerenciarFuncionarios(usuarioLogado));});
-        navBar.getChildren().addAll(tabProdutos, tabFuncionarios);
+
+        Label tabRelatorios = new Label("Relatórios");
+        tabRelatorios.setStyle("-fx-text-fill: #A0A5A2; -fx-font-weight: bold; -fx-padding: 0 10 5 10; -fx-cursor: hand;");
+        try {
+            tabRelatorios.setGraphic(criarIcone("/images/iconRelatorio_OFF.png", 14));
+        } catch (Exception e) {}
+        navBar.getChildren().add(tabRelatorios);
+        tabRelatorios.setOnMouseClicked(e -> Login.mudarDeTela(primaryStage, new Relatorios(usuarioLogado)));
         //BARRA DE AÇÕES
-        HBox acoesBar = new HBox();
-        acoesBar.setAlignment(Pos.CENTER_RIGHT);
+        HBox acoesBar = new HBox(15);
+        acoesBar.setAlignment(Pos.CENTER);
+
+        Region spacerAcoes = new Region();
+        HBox.setHgrow(spacerAcoes, Priority.ALWAYS);
 
         Button btnAdicionarFuncionario = new Button("Adicionar Funcionário");
         btnAdicionarFuncionario.setStyle("-fx-background-color: #012417; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 20 10 20; -fx-font-weight: bold; -fx-cursor: hand;");
         btnAdicionarFuncionario.setOnAction(e -> abrirModalAdicionar(primaryStage));
+        acoesBar.getChildren().add(spacerAcoes);
         acoesBar.getChildren().add(btnAdicionarFuncionario);
         // TABELA DE FUNCIONÁRIOS
         DropShadow cardShadow = new DropShadow();
@@ -159,10 +169,10 @@ public class GerenciarFuncionarios extends Application {
 
         Label hAcoes = new Label("Ações");
         hAcoes.setStyle("-fx-font-weight: bold; -fx-text-fill: #111;");
-        hAcoes.setPrefWidth(100);
+        hAcoes.setPrefWidth(120);
         hAcoes.setAlignment(Pos.CENTER);
 
-        headerTabela.getChildren().addAll(hNome, hCargo, hAcoes);
+        headerTabela.getChildren().addAll(hNome, hCargo, spacer, hAcoes);
         this.tabelaFuncionarios = new VBox();
         // carrega do banco de verdade
         carregarFuncionarios(primaryStage);
@@ -177,11 +187,6 @@ public class GerenciarFuncionarios extends Application {
         primaryStage.setTitle("Sr. Pedrinho - Gerenciar Funcionários");
         primaryStage.setScene(scene);
         primaryStage.show();
-        // Animação de entrada (Fade In)
-        FadeTransition ftIn = new FadeTransition(Duration.millis(300), root);
-        ftIn.setFromValue(0.0);
-        ftIn.setToValue(1.0);
-        ftIn.play();
     }
 
     public static void mudarDeTela(Stage stage, Application novaTela) {
@@ -209,6 +214,9 @@ public class GerenciarFuncionarios extends Application {
         linha.setAlignment(Pos.CENTER_LEFT);
         linha.setStyle("-fx-padding: 15 25 15 25; -fx-border-color: #EAEAEA; -fx-border-width: 0 0 1 0;");
 
+        Region spacerLinha = new Region();
+        HBox.setHgrow(spacerLinha, Priority.ALWAYS);
+
         Label lblNome = new Label(func.getNome());
         lblNome.setStyle("-fx-font-weight: bold; -fx-text-fill: #333;");
         lblNome.setPrefWidth(400);
@@ -226,7 +234,7 @@ public class GerenciarFuncionarios extends Application {
         boxCargo.getChildren().add(lblCargo);
 
         HBox acaoBox = new HBox(10);
-        acaoBox.setPrefWidth(100);
+        acaoBox.setPrefWidth(120);
         acaoBox.setAlignment(Pos.CENTER);
 
         Button btnEditar = new Button();
@@ -247,7 +255,7 @@ public class GerenciarFuncionarios extends Application {
         });
 
         acaoBox.getChildren().addAll(btnEditar, btnDeletar);
-        linha.getChildren().addAll(lblNome, boxCargo, acaoBox);
+        linha.getChildren().addAll(lblNome, boxCargo, spacerLinha, acaoBox);
         return linha;
     }
 

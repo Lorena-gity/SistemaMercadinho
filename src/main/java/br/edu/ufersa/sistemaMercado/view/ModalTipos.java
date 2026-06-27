@@ -36,14 +36,14 @@ public class ModalTipos {
         container.setStyle("-fx-background-color: #FFFFFF;");
 
         Label titulo = new Label("Categorias");
-        titulo.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #02261A;");
+        titulo.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: black;");
 
         HBox addBox = new HBox(8);
         TextField campoNome = new TextField();
         campoNome.setPromptText("Nova categoria");
         HBox.setHgrow(campoNome, Priority.ALWAYS);
         Button btnAdd = new Button("Adicionar");
-        btnAdd.setStyle("-fx-background-color: #02261A; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 8 16 8 16; -fx-cursor: hand;");
+        btnAdd.setStyle("-fx-background-color: #02261A; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 16 8 16; -fx-cursor: hand;");
         btnAdd.setOnAction(e -> {
             String nome = campoNome.getText() == null ? "" : campoNome.getText().trim();
             if (nome.isEmpty()) return;
@@ -84,11 +84,12 @@ public class ModalTipos {
             linha.setStyle("-fx-background-color: #F4F4F4; -fx-background-radius: 6; -fx-padding: 10;");
 
             Label nome = new Label(tipo.getNome());
+            nome.setStyle("-fx-text-fill: #222222;" + "-fx-font-size: 14px;");
             HBox.setHgrow(nome, Priority.ALWAYS);
             nome.setMaxWidth(Double.MAX_VALUE);
 
             Button btnRenomear = new Button("Renomear");
-            btnRenomear.setStyle("-fx-background-color: #8bc34a; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;");
+            btnRenomear.setStyle("-fx-background-color: #8bc34a; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;");
             btnRenomear.setOnAction(e -> {
                 TextInputDialog dialog = new TextInputDialog(tipo.getNome());
                 dialog.setHeaderText(null);
@@ -105,7 +106,7 @@ public class ModalTipos {
             });
 
             Button btnExcluir = new Button("Excluir");
-            btnExcluir.setStyle("-fx-background-color: #e08a4a; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;");
+            btnExcluir.setStyle("-fx-background-color: #e08a4a; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;");
             btnExcluir.setOnAction(e -> {
                 if (controller.excluir(tipo.getNome())) {
                     recarregar();

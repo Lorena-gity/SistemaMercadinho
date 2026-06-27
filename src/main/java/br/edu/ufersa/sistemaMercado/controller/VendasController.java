@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VendasController {
-
     private final NotaCompraService notaCompraService = new NotaCompraService();
     private final ProdutoService produtoService = new ProdutoService();
     private final TipoProdutoService tipoProdutoService = new TipoProdutoService();
@@ -85,10 +84,8 @@ public class VendasController {
             List<Produto> todos = produtoService.listarProdutos();
             List<Produto> filtrados = new ArrayList<>();
             for (Produto p : todos) {
-                boolean bateCodigo = p.getCodigoBarras() != null
-                        && p.getCodigoBarras().contains(termo);
-                boolean bateNome = p.getNome() != null
-                        && p.getNome().toLowerCase().contains(termo.toLowerCase());
+                boolean bateCodigo = p.getCodigoBarras() != null && p.getCodigoBarras().contains(termo);
+                boolean bateNome = p.getNome() != null && p.getNome().toLowerCase().contains(termo.toLowerCase());
                 if (bateCodigo || bateNome) {
                     filtrados.add(p);
                 }

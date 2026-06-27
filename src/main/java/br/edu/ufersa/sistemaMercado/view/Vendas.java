@@ -125,21 +125,21 @@ public class Vendas extends Application {
 
         if (isGerente()) {
             Label tabFuncionarios = new Label("Funcionários");
-            tabFuncionarios.setStyle("-fx-text-fill: #A0A5A2; -fx-font-weight: bold; -fx-padding: 0 10 5 10; -fx-cursor: hand;");
+            tabFuncionarios.setStyle("-fx-text-fill: #A0A5A2; -fx-font-weight: bold; -fx-padding: 0 10 5 10; -fx-cursor: hand");
             try {
                 tabFuncionarios.setGraphic(criarIcone("/images/iconFuncionario.png", 14));
             } catch (Exception e) {}
-            tabFuncionarios.setOnMouseClicked(e -> {
-                Login.mudarDeTela(primaryStage, new GerenciarFuncionarios(usuarioLogado));
-            });
             navBar.getChildren().add(tabFuncionarios);
-        }
+            tabFuncionarios.setOnMouseClicked(e -> {Login.mudarDeTela(primaryStage, new GerenciarFuncionarios(usuarioLogado));});
 
-        // Relatórios: liberado para gerente e funcionário
-        Label tabRelatorios = new Label("Relatórios");
-        tabRelatorios.setStyle("-fx-text-fill: #A0A5A2; -fx-font-weight: bold; -fx-padding: 0 10 5 10; -fx-cursor: hand;");
-        tabRelatorios.setOnMouseClicked(e -> Login.mudarDeTela(primaryStage, new Relatorios(usuarioLogado)));
-        navBar.getChildren().add(tabRelatorios);
+            Label tabRelatorios = new Label("Relatórios");
+            tabRelatorios.setStyle("-fx-text-fill: #A0A5A2; -fx-font-weight: bold; -fx-padding: 0 10 5 10; -fx-cursor: hand;");
+            try {
+                tabRelatorios.setGraphic(criarIcone("/images/iconRelatorio_OFF.png", 14));
+            } catch (Exception e) {}
+            navBar.getChildren().add(tabRelatorios);
+            tabRelatorios.setOnMouseClicked(e -> Login.mudarDeTela(primaryStage, new Relatorios(usuarioLogado)));
+        }
         // AÇÕES
         HBox acoesBar = new HBox(15);
         acoesBar.setAlignment(Pos.CENTER_LEFT);

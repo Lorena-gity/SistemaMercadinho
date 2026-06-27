@@ -6,19 +6,10 @@ import br.edu.ufersa.sistemaMercado.model.service.NotaCompraService;
 
 public class CompraFacade {
 
-    private final NotaCompraService notaCompraService =
-            new NotaCompraService();
+    private final NotaCompraService notaCompraService = new NotaCompraService();
 
-    public void adicionarProduto(
-            NotaCompra nota,
-            Produto produto,
-            int quantidade) throws Exception {
-
-        notaCompraService.adicionarItem(
-                nota,
-                produto,
-                quantidade
-        );
+    public void adicionarProduto(NotaCompra nota, Produto produto, int quantidade) throws Exception {
+        notaCompraService.adicionarItem(nota, produto, quantidade);
     }
 
     public void finalizarCompra(NotaCompra nota) throws Exception {
