@@ -165,7 +165,14 @@ public class Vendas extends Application {
         btnComprar.setStyle("-fx-background-color: #02261A; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 20 10 20; -fx-font-weight: bold; -fx-cursor: hand;");
         btnComprar.setOnAction(e -> new ModalCompraProduto(controller).abrir(primaryStage, this::atualizarPainelLateral));
 
-        acoesBar.getChildren().addAll(btnFinalizar, btnCancelar, spacerAcoes, btnComprar);
+        acoesBar.getChildren().addAll(btnFinalizar, btnCancelar, spacerAcoes);
+        if (isGerente()) {
+            Button btnCategorias = new Button("Categorias");
+            btnCategorias.setStyle("-fx-background-color: transparent; -fx-border-color: #02261A; -fx-border-radius: 8; -fx-text-fill: #02261A; -fx-padding: 10 20 10 20; -fx-font-weight: bold; -fx-cursor: hand;");
+            btnCategorias.setOnAction(e -> new ModalTipos().abrir(primaryStage, this::atualizarPainelLateral));
+            acoesBar.getChildren().add(btnCategorias);
+        }
+        acoesBar.getChildren().add(btnComprar);
         // CARDS PRINCIPAIS
         HBox cardsContainer = new HBox(25);
         HBox.setHgrow(cardsContainer, Priority.ALWAYS);
