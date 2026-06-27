@@ -25,6 +25,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Vendas extends Application {
     private Usuario usuarioLogado = SessaoUsuario.getInstancia().getUsuarioLogado(); // busca o usuário da sessão global
@@ -339,16 +340,61 @@ public class Vendas extends Application {
             mostrarAlerta("Carrinho Vazio", "Adicione produtos antes de finalizar a venda.", Alert.AlertType.WARNING);
             return;
         }
+
+        double total = 0.0;
+        for (ItemCarrinho item : carrinho) {
+            total += item.getTotal();
+        }
+
+        Double valorPago = solicitarPagamento(total);
+        if (valorPago == null) {
+            return; // cliente/operador cancelou o pagamento
+        }
+
         boolean sucesso = controller.finalizarVenda(carrinho);
 
         if (sucesso) {
-            mostrarAlerta("Sucesso", "Venda finalizada com sucesso!", Alert.AlertType.INFORMATION);
+            double troco = valorPago - total;
+            mostrarAlerta("Venda finalizada",
+                    "Total: " + formatarMoeda(total)
+                            + "\nRecebido: " + formatarMoeda(valorPago)
+                            + "\nTroco: " + formatarMoeda(troco),
+                    Alert.AlertType.INFORMATION);
             carrinho.clear();
             txtBusca.clear();
             atualizarVisualizacaoCarrinho();
             atualizarPainelLateral();
         } else {
             mostrarAlerta("Erro", "Não foi possível finalizar a venda.", Alert.AlertType.ERROR);
+        }
+    }
+
+    // Pede o valor recebido e só libera a venda quando ele cobre o total.
+    // Retorna null se o pagamento for cancelado.
+    private Double solicitarPagamento(double total) {
+        while (true) {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Pagamento");
+            dialog.setHeaderText("Total a pagar: " + formatarMoeda(total));
+            dialog.setContentText("Valor recebido (R$):");
+
+            Optional<String> resposta = dialog.showAndWait();
+            if (!resposta.isPresent()) {
+                return null;
+            }
+
+            String texto = resposta.get().trim().replace(",", ".");
+            try {
+                double pago = Double.parseDouble(texto);
+                if (pago < total) {
+                    mostrarAlerta("Valor insuficiente",
+                            "O valor recebido é menor que o total da venda.", Alert.AlertType.WARNING);
+                    continue;
+                }
+                return pago;
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("Valor inválido", "Digite um valor numérico válido.", Alert.AlertType.WARNING);
+            }
         }
     }
 
