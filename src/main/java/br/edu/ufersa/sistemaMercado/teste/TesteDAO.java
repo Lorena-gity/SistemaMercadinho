@@ -32,7 +32,7 @@ public class TesteDAO {
         try {
             TipoProduto alimentos = new TipoProdutoDAO().buscarPorNome("Alimentos");
             Produto arroz = new Produto(0, "7891111111111", "Arroz 5kg",
-                    30, 24.90, alimentos, FormaDeVenda.UNIDADE);
+                    "Tio João", 30, 24.90, alimentos, FormaDeVenda.UNIDADE);
             produtoService.criarProduto(arroz);
             System.out.println("Produto cadastrado com id = " + arroz.getIdProduto());
         } catch (DadosInvalidosException e) {

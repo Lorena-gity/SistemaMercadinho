@@ -83,6 +83,13 @@ public class ModalCompraProduto {
         cbTipo.setPrefWidth(200);
         gridCampos.add(lblTipo, 1, 2);
         gridCampos.add(cbTipo, 1, 3);
+        // MARCA
+        VBox boxMarca = new VBox(5);
+        Label lblMarca = new Label("Marca");
+        lblMarca.getStyleClass().add("modal-label");
+        TextField txtMarca = new TextField();
+        txtMarca.getStyleClass().add("modal-input");
+        boxMarca.getChildren().addAll(lblMarca, txtMarca);
         // QUANTIDADE
         VBox boxQuantidade = new VBox(5);
         Label lblQtd = new Label("Quantidade");
@@ -95,6 +102,7 @@ public class ModalCompraProduto {
         btnSalvar.getStyleClass().add("btn-salvar-modal");
         btnSalvar.setOnAction(e -> {
             String nome = txtNome.getText().trim();
+            String marca = txtMarca.getText().trim();
             String precoStr = txtPreco.getText().trim();
             String categoria = cbCategoria.getValue();
             String tipo = cbTipo.getValue();
@@ -106,7 +114,7 @@ public class ModalCompraProduto {
             try {
                 double preco = Double.parseDouble(precoStr.replace(",", "."));
                 double quantidade = Double.parseDouble(qtdStr.replace(",", "."));
-                boolean sucesso = controller.salvarProdutoComprado(nome, preco, categoria, tipo, quantidade);
+                boolean sucesso = controller.salvarProdutoComprado(nome, marca, preco, categoria, tipo, quantidade);
 
                 if (sucesso) {
                     Vendas.mostrarAlerta("Sucesso", "Produto cadastrado com sucesso.", Alert.AlertType.INFORMATION);
@@ -122,7 +130,7 @@ public class ModalCompraProduto {
                 Vendas.mostrarAlerta("Dados Inválidos", "Preço e quantidade devem ser numéricos.", Alert.AlertType.ERROR);
             }
         });
-        containerModal.getChildren().addAll(boxFechar, lblTitulo, gridCampos, boxQuantidade, btnSalvar);
+        containerModal.getChildren().addAll(boxFechar, lblTitulo, gridCampos, boxMarca, boxQuantidade, btnSalvar);
 
         Scene scene = new Scene(containerModal);
         scene.setFill(Color.TRANSPARENT);

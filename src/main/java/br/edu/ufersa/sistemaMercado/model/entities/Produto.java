@@ -6,6 +6,7 @@ public class Produto {
     private int idProduto;
     private String codigoBarras;
     private String nome;
+    private String marca;
     private double quantidadeEstoque;
     private double preco;
     private TipoProduto tipo;
@@ -14,10 +15,11 @@ public class Produto {
     // Construtores
     public Produto() {}
 
-    public Produto(int idProduto, String codigoBarras, String nome, double quantidadeEstoque, double preco, TipoProduto tipo, FormaDeVenda formaDeVenda) {
+    public Produto(int idProduto, String codigoBarras, String nome, String marca, double quantidadeEstoque, double preco, TipoProduto tipo, FormaDeVenda formaDeVenda) {
 		this.idProduto = idProduto;
 		this.codigoBarras = codigoBarras;
 		this.nome = nome;
+		this.marca = marca;
 		this.quantidadeEstoque = quantidadeEstoque;
 		this.preco = preco;
 		this.tipo = tipo;
@@ -40,7 +42,15 @@ public class Produto {
     public String getNome() {
         return nome;
     }
-    
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
     public double getPreco() {
         return preco;
     }

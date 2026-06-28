@@ -530,7 +530,8 @@ public class Vendas extends Application {
 
     private HBox criarCardProdutoRecente(Produto prod) {
         String nomeCategoria = (prod.getTipo() != null) ? prod.getTipo().getNome() : "Geral";
-        String infoPreco = nomeCategoria + " - R$ " + String.format("%.2f", prod.getPreco());
+        String marca = (prod.getMarca() != null && !prod.getMarca().isEmpty()) ? prod.getMarca() + " - " : "";
+        String infoPreco = marca + nomeCategoria + " - R$ " + String.format("%.2f", prod.getPreco());
         boolean porPeso = prod.getFormaDeVenda() == FormaDeVenda.QUILO;
         String estoqueFmt = porPeso
                 ? String.format("%.3f", prod.getQuantidadeEstoque())

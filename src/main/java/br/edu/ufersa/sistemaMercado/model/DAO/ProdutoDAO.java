@@ -19,16 +19,17 @@ public class ProdutoDAO implements DAO<Produto> {
 
     @Override
     public void inserir(Produto produto) {
-        String sql = "INSERT INTO produto (codigo_barras, nome, quantidade_estoque, preco, forma_venda, id_tipo) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO produto (codigo_barras, nome, marca, quantidade_estoque, preco, forma_venda, id_tipo) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = ConexaoBD.getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, produto.getCodigoBarras());
             ps.setString(2, produto.getNome());
-            ps.setDouble(3, produto.getQuantidadeEstoque());
-            ps.setDouble(4, produto.getPreco());
-            ps.setString(5, produto.getFormaDeVenda().name());
-            ps.setInt(6, produto.getTipo().getIdTipo());
+            ps.setString(3, produto.getMarca());
+            ps.setDouble(4, produto.getQuantidadeEstoque());
+            ps.setDouble(5, produto.getPreco());
+            ps.setString(6, produto.getFormaDeVenda().name());
+            ps.setInt(7, produto.getTipo().getIdTipo());
             ps.executeUpdate();
 
             ResultSet rs = ps.getGeneratedKeys();
@@ -42,17 +43,18 @@ public class ProdutoDAO implements DAO<Produto> {
 
     @Override
     public void atualizar(Produto produto) {
-        String sql = "UPDATE produto SET codigo_barras = ?, nome = ?, quantidade_estoque = ?, " +
+        String sql = "UPDATE produto SET codigo_barras = ?, nome = ?, marca = ?, quantidade_estoque = ?, " +
                      "preco = ?, forma_venda = ?, id_tipo = ? WHERE id_produto = ?";
         try (Connection con = ConexaoBD.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, produto.getCodigoBarras());
             ps.setString(2, produto.getNome());
-            ps.setDouble(3, produto.getQuantidadeEstoque());
-            ps.setDouble(4, produto.getPreco());
-            ps.setString(5, produto.getFormaDeVenda().name());
-            ps.setInt(6, produto.getTipo().getIdTipo());
-            ps.setInt(7, produto.getIdProduto());
+            ps.setString(3, produto.getMarca());
+            ps.setDouble(4, produto.getQuantidadeEstoque());
+            ps.setDouble(5, produto.getPreco());
+            ps.setString(6, produto.getFormaDeVenda().name());
+            ps.setInt(7, produto.getTipo().getIdTipo());
+            ps.setInt(8, produto.getIdProduto());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao atualizar produto.", e);
@@ -140,11 +142,12 @@ public class ProdutoDAO implements DAO<Produto> {
         int id = rs.getInt("id_produto");
         String codigo = rs.getString("codigo_barras");
         String nome = rs.getString("nome");
+        String marca = rs.getString("marca");
         double estoque = rs.getDouble("quantidade_estoque");
         double preco = rs.getDouble("preco");
         FormaDeVenda forma = FormaDeVenda.valueOf(rs.getString("forma_venda"));
         TipoProduto tipo = tipoDAO.buscarPorId(rs.getInt("id_tipo"));
 
-        return new Produto(id, codigo, nome, estoque, preco, tipo, forma);
+        return new Produto(id, codigo, nome, marca, estoque, preco, tipo, forma);
     }
 }

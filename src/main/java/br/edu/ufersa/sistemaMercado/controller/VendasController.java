@@ -41,7 +41,7 @@ public class VendasController {
         }
     }
 
-    public boolean salvarProdutoComprado(String nome, double preco, String categoriaNome, String forma, double quantidade) {
+    public boolean salvarProdutoComprado(String nome, String marca, double preco, String categoriaNome, String forma, double quantidade) {
         try {
             TipoProduto tipo = tipoProdutoService.listarTipos().stream()
                     .filter(t -> t.getNome().equals(categoriaNome))
@@ -51,6 +51,7 @@ public class VendasController {
 
             Produto novoProduto = new Produto();
             novoProduto.setNome(nome);
+            novoProduto.setMarca(marca);
             novoProduto.setPreco(preco);
             novoProduto.setQuantidadeEstoque(quantidade);
             novoProduto.setFormaDeVenda(FormaDeVenda.valueOf(forma));
@@ -112,7 +113,7 @@ public class VendasController {
         public double getTotal() { return produto.getPreco() * quantidade; }
     }
 
-    public boolean editarProduto(Produto produto, String novoNome, double novoPreco, String categoriaNome, String formaVendaNome) {
+    public boolean editarProduto(Produto produto, String novoNome, String novaMarca, double novoPreco, String categoriaNome, String formaVendaNome) {
         try {
             TipoProduto tipo = tipoProdutoService.listarTipos().stream()
                     .filter(t -> t.getNome().equals(categoriaNome))
@@ -122,6 +123,7 @@ public class VendasController {
             FormaDeVenda formaDeVenda = FormaDeVenda.valueOf(formaVendaNome);
 
             produto.setNome(novoNome);
+            produto.setMarca(novaMarca);
             produto.setPreco(novoPreco);
             produto.setTipo(tipo);
             produto.setFormaDeVenda(formaDeVenda);

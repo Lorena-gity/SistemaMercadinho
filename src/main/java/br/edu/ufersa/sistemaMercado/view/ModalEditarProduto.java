@@ -98,11 +98,19 @@ public class ModalEditarProduto {
         }
         gridCampos.add(lblForma,1,2);
         gridCampos.add(cbForma,1,3);
+        // MARCA
+        Label lblMarca = new Label("Marca");
+        lblMarca.getStyleClass().add("modal-label");
+        TextField txtMarca = new TextField(produto.getMarca() != null ? produto.getMarca() : "");
+        txtMarca.getStyleClass().add("modal-input");
+        gridCampos.add(lblMarca,0,4);
+        gridCampos.add(txtMarca,0,5);
         // SALVAR
         Button btnSalvar = new Button("Salvar");
         btnSalvar.getStyleClass().add("btn-salvar-modal");
         btnSalvar.setOnAction(e -> {
             String nome = txtNome.getText().trim();
+            String marca = txtMarca.getText().trim();
             String precoStr = txtPreco.getText().trim();
             String categoria = cbCategoria.getValue();
             String forma = cbForma.getValue();
@@ -113,7 +121,7 @@ public class ModalEditarProduto {
             }
             try {
                 double preco = Double.parseDouble(precoStr.replace(",", "."));
-                boolean sucesso = controller.editarProduto(produto, nome, preco, categoria, forma);
+                boolean sucesso = controller.editarProduto(produto, nome, marca, preco, categoria, forma);
 
                 if(sucesso){
                     Vendas.mostrarAlerta("Sucesso", "Produto atualizado com sucesso.", Alert.AlertType.INFORMATION);

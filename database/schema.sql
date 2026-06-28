@@ -19,6 +19,7 @@ CREATE TABLE produto (
     id_produto         INT AUTO_INCREMENT PRIMARY KEY,
     codigo_barras      VARCHAR(13) NULL UNIQUE,
     nome               VARCHAR(150) NOT NULL,
+    marca              VARCHAR(100),
     quantidade_estoque DECIMAL(10,3) NOT NULL DEFAULT 0,
     preco              DECIMAL(10,2) NOT NULL,
     forma_venda        ENUM('QUILO','UNIDADE') NOT NULL,

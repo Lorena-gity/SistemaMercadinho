@@ -29,6 +29,7 @@ package "model.entities" {
         - idProduto : int
         - codigoBarras : String
         - nome : String
+        - marca : String
         - quantidadeEstoque : double
         - preco : double
         - formaDeVenda : FormaDeVenda
