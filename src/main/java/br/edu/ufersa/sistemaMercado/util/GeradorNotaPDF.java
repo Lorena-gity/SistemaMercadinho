@@ -80,10 +80,8 @@ public final class GeradorNotaPDF {
             doc.add(alinhadoDireita("Total: " + moeda(nota.getValorTotal()), fCabecalho));
             doc.add(alinhadoDireita("Recebido: " + moeda(valorPago), fNormal));
             doc.add(alinhadoDireita("Troco: " + moeda(troco), fNormal));
-        } finally {
-            if (doc.isOpen()) {
-                doc.close();
-            }
+
+            doc.close();
         }
         return arquivo;
     }

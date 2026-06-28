@@ -180,8 +180,4 @@ public class VendasController {
         }
         return formas;
     }
-
-    public void abrirTelaFuncionarios(Stage stage) {
-        Login.mudarDeTela(stage, new GerenciarFuncionarios(SessaoUsuario.getInstancia().getUsuarioLogado()));
-    }
 }

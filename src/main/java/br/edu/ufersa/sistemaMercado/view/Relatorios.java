@@ -108,7 +108,7 @@ public class Relatorios extends Application {
         Label tabFuncionarios = new Label("Funcionários");
         tabFuncionarios.setStyle("-fx-text-fill: #A0A5A2;" + "-fx-font-weight: bold;" + "-fx-padding: 0 10 5 10;" + "-fx-cursor: hand;");
         try {
-            tabFuncionarios.setGraphic(criarIcone("/images/iconFuncionario_OFF.png",14));
+            tabFuncionarios.setGraphic(criarIcone("/images/iconFuncionario.png",14));
         } catch (Exception ignored){}
         tabFuncionarios.setOnMouseClicked(e -> Login.mudarDeTela(primaryStage, new GerenciarFuncionarios(usuarioLogado)));
 

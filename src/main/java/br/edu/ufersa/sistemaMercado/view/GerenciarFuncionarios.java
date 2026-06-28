@@ -119,7 +119,7 @@ public class GerenciarFuncionarios extends Application {
         Label tabFuncionarios = new Label("Funcionários");
         tabFuncionarios.setStyle("-fx-text-fill: #02261A;" + "-fx-font-weight: bold;" + "-fx-border-color: #02261A;" + "-fx-border-width: 0 0 3 0;" + "-fx-padding: 0 10 5 10;");
         try {
-            tabFuncionarios.setGraphic(criarIcone("/images/iconFuncionario.png", 14));
+            tabFuncionarios.setGraphic(criarIcone("/images/iconFuncionario_ON.png", 14));
         } catch (Exception e) {}
         navBar.getChildren().add(tabFuncionarios);
         tabFuncionarios.setOnMouseClicked(e -> {Login.mudarDeTela(primaryStage, new GerenciarFuncionarios(usuarioLogado));});
@@ -398,7 +398,7 @@ public class GerenciarFuncionarios extends Application {
             }
 
             try {
-                controller.editarFuncionario(func, novaSenha.isEmpty() ? null : novaSenha, novoNome);
+                controller.editarFuncionario(func, novoNome, novaSenha);
 
                 mostrarAlerta("Sucesso", "Funcionário atualizado com sucesso!", Alert.AlertType.INFORMATION);
                 modalStage.close();

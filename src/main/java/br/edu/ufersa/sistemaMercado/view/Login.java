@@ -89,12 +89,7 @@ public class Login extends Application {
             controller.autenticar(usuarioDigitado, senhaDigitada, primaryStage);
         });
         // Adicionando componentes ao Card
-        loginCard.getChildren().addAll(
-                lblWelcome,
-                txtUsuario,
-                txtSenha,
-                btnEntrar
-        );
+        loginCard.getChildren().addAll(lblWelcome, txtUsuario, txtSenha, btnEntrar);
         // Adicionando as duas seções ao layout principal
         root.getChildren().addAll(leftSection, loginCard);
         // CONFIGURAÇÃO DA JANELA
