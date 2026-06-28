@@ -207,7 +207,11 @@ package "util" {
     class SenhaUtil {
         + {static} hash(senha : String) : String
     }
+    class GeradorNotaPDF {
+        + {static} gerar(nota, valorPago, troco, operador) : File
+    }
 }
+GeradorNotaPDF ..> NotaCompra
 UsuarioService ..> SenhaUtil
 Usuario ..> SenhaUtil
 ProdutoDAO ..> ConexaoBD

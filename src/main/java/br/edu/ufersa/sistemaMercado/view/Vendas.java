@@ -4,6 +4,7 @@ import br.edu.ufersa.sistemaMercado.controller.VendasController;
 import br.edu.ufersa.sistemaMercado.controller.VendasController.ItemCarrinho;
 import br.edu.ufersa.sistemaMercado.model.entities.*;
 import br.edu.ufersa.sistemaMercado.model.session.SessaoUsuario;
+import br.edu.ufersa.sistemaMercado.util.GeradorNotaPDF;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -396,10 +397,11 @@ public class Vendas extends Application {
             return; // cliente/operador cancelou o pagamento
         }
 
-        boolean sucesso = controller.finalizarVenda(carrinho);
+        NotaCompra nota = controller.finalizarVenda(carrinho);
 
-        if (sucesso) {
+        if (nota != null) {
             double troco = valorPago - total;
+            emitirNota(nota, valorPago, troco);
             mostrarAlerta("Venda finalizada",
                     "Total: " + formatarMoeda(total)
                             + "\nRecebido: " + formatarMoeda(valorPago)
@@ -411,6 +413,18 @@ public class Vendas extends Application {
             atualizarPainelLateral();
         } else {
             mostrarAlerta("Erro", "Não foi possível finalizar a venda.", Alert.AlertType.ERROR);
+        }
+    }
+
+    // Gera o comprovante em PDF da venda e abre no visualizador padrão do sistema.
+    private void emitirNota(NotaCompra nota, double valorPago, double troco) {
+        try {
+            java.io.File pdf = GeradorNotaPDF.gerar(nota, valorPago, troco, usuarioLogado.getNome());
+            if (java.awt.Desktop.isDesktopSupported()) {
+                java.awt.Desktop.getDesktop().open(pdf);
+            }
+        } catch (Exception ex) {
+            System.out.println("Erro ao gerar a nota em PDF: " + ex.getMessage());
         }
     }
 

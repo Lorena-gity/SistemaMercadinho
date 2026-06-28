@@ -23,21 +23,22 @@ public class VendasController {
     private final ProdutoService produtoService = new ProdutoService();
     private final TipoProdutoService tipoProdutoService = new TipoProdutoService();
 
-    public boolean finalizarVenda(List<ItemCarrinho> itens) {
-        if (itens.isEmpty()) return false;
+    // Retorna a nota gerada (com número e itens) em caso de sucesso, ou null se falhar.
+    public NotaCompra finalizarVenda(List<ItemCarrinho> itens) {
+        if (itens.isEmpty()) return null;
         try {
             NotaCompra nota = new NotaCompra();
             for (ItemCarrinho item : itens) {
                 notaCompraService.adicionarItem(nota, item.getProduto(), item.getQuantidade());
             }
             notaCompraService.finalizarVenda(nota);
-            return true;
+            return nota;
         } catch (EstoqueInsuficienteException e) {
             System.out.println("Estoque insuficiente: " + e.getMessage());
-            return false;
+            return null;
         } catch (Exception e) {
             System.out.println("Erro ao finalizar venda: " + e.getMessage());
-            return false;
+            return null;
         }
     }
 
